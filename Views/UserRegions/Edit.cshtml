@@ -1,0 +1,89 @@
+@model Octopus.Models.UsuarioRegion
+
+@{
+    ViewData["Title"] = "Edit";
+    var usId = @Model.UserId;
+}
+<div id="main-@Model.Id"> 
+    <hr />
+    <h3>@Model.Region.Carrier.CarrierName<small>@Model.Region.RegionName</small></h3>
+
+    <div class="container">
+        <div class="col-md-4 form-inline">
+            <a class="col-12"> @ViewBag.successMsg</a>
+
+            <form class="form-inline formaUsr">
+
+                <div asp-validation-summary="ModelOnly"  class="text-danger"></div>
+                <label id="error-@Model.Id" class="text-danger"></label>
+                <input type="hidden" asp-for="UserId" id="usId-@Model.Id" class="form-control" value="@Model.UserId" />
+                <input type="hidden" asp-for="RegionId" id="regId-@Model.Id" class="form-control" value="@Model.RegionId" />
+                <div class="form-group">
+                    <label asp-for="Comision" class="control-label"></label>
+                    <input id="comision-@Model.Id" asp-for="Comision" type="number" max="7" min="1" class="form-control" />
+                    <label class="form-check-label">
+                        <input type="checkbox" id="status-@Model.Id" asp-for="Status">
+                        Activo <!--Input class="form-check-input"  asp-for="Status" /-->
+                    </label>
+                    @if (ViewBag.editar == true)
+                    {
+                        <input type="button" value="Editar" class="btn btn-success" />
+                    }
+                    else
+                    {
+                        <input type="button" onclick="sendAjaxMsg(name)" id="btn-@Model.Id" name="@Model.Id" value="Asignar" class="btn btn-primary" />
+                    }
+
+                    <span asp-validation-for="Comision" class="text-danger"></span>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!--div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="RegionId" class="control-label"></label>
+                <select asp-for="RegionId" class="form-control" asp-items="ViewBag.RegionId"></select>
+                <span asp-validation-for="RegionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comision" class="control-label"></label>
+                <input asp-for="Comision" class="form-control" />
+                <span asp-validation-for="Comision" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Status" /> 
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div-->
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+
+
+</script>
+   
+
+}

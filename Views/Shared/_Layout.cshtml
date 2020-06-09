@@ -1,0 +1,392 @@
+﻿@{
+    var cartera = SignInManager.IsSignedIn(User) == true ? context.Carteras.FirstOrDefault(s => s.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier).ToString()):null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Octopus</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/main.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Recargas" asp-action="Index">Recargas</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <partial name="_LoginPartial" />
+
+                    <input hidden id="dateInit" type="datetime-local" min="@DateTime.Now.AddDays(-1).ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.AddDays(-1).ToString("s")" class="form-control" />
+                    <input hidden id="dateEnd" type="datetime-local" max="@DateTime.Now.ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.ToString("s")" class="form-control" />
+                    <ul class="navbar-nav flex-grow-1" style="color:white">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="WebServRegions1" asp-action="Index">WS Config</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Montoes" asp-action="Index">Montos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="UsuarioGrupos" asp-action="Index">Grupos</a>
+                                </li>
+                            }
+
+                            <!--li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Ladas" asp-action="Index">Ladas</a>
+            </!--li-->
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                            </li>
+
+
+                        }
+
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <nav class="navbar navbar-light bg-white box-shadow">
+                <a id="errorLbl" class="text-danger col-12"></a>
+                <div class="main form-inline col-12">
+
+                    <div id="walletDetail" class="container col-sm-12 col-md-6" style="background-color:azure">
+                        <h6 class="text-center">Mi Cartera</h6>
+
+                        @{
+                            await Html.RenderPartialAsync("/Views/Carteras/Details.cshtml", cartera);
+                        }
+                    </div>
+                    <div id="lastMovements" class="container col-sm-12 col-md-6" style="background-color:azure">
+                        <h6 class="text-center">Últimos movimientos</h6>
+                        @{
+                            await Html.RenderPartialAsync("/Views/CarteraTransactions/Index.cshtml", context.CarteraTransactions.Where(s => s.CarteraId == cartera.Id).OrderByDescending(s => s.Id).Take(3).ToList());
+                        }
+                    </div>
+                </div>
+            </nav>
+
+        }
+    </header>
+    <div class="main">
+
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <div class="modal" id="modalPrincipal" tabindex="-1" role="dialog">
+        <div class="modal-dialog  modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modalTitle" class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                  
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" hidden id="showModal" class="btn btn-primary" data-toggle="modal" data-target="#modalPrincipal">
+        Modal
+    </button>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - Octopus - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <!--script src="https://upt123.activehosted.com/f/embed.php?id=5" type="text/javascript" charset="utf-8"></!--script-->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <!--script src="https://upt240.activehosted.com/f/embed.php?id=1" type="text/javascript" charset="utf-8"></script-->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        function showMessage() {
+            alert("function showmessage");
+        }
+        function showModal(val) {
+            var id = val.id;
+            var name = val.name;
+            var value = val.value;
+            var showHide = id == "getConsulta" ? false : true;
+
+            switch (id) {
+                case 'getConsulta':
+                case 'getReporteAll':
+                    document.getElementById('modalTitle').innerHTML = name;
+                    Swal.fire({
+                        title: 'Buscar regargas',
+                        text: "Elige fecha inicial y final",
+                        icon: 'warning',
+                        html:
+                            '<a>Fecha Inicio</b> ' +
+                            '<input id="DateStart" type="datetime-local" min="@DateTime.Now.AddYears(-1).ToString("s")" max="@DateTime.Now.ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.AddDays(-1).ToString("s")" class="form-control" /> ' +
+                            '<a>Fecha Termino</b> ' +
+                            '<input id="DateEnd" type="datetime-local" min="@DateTime.Now.AddYears(-1).ToString("s")" max="@DateTime.Now.ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.ToString("s")" class="form-control" /> ',
+
+                        showCancelButton: true,
+                        confirmButtonText: 'Buscar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true
+                    }).then((result) => {
+
+                        if (result.value) {
+                            Swal.fire({
+                                title: 'Procesando tu petición!',
+                                timerProgressBar: true,
+                                onBeforeOpen: () => {
+                                    Swal.showLoading()
+
+                                }
+                            })
+                            var dataInit = document.getElementById("dateInit").value;
+                            var dataEnd = document.getElementById("dateEnd").value;
+
+                            showDetailsModal("GET", "@Url.Action("Index", "Recargas")", { id: "", partial: true, datInit: dataInit, datEnd: dataEnd }, showHide);
+                        }//end if(result.value)
+
+
+                    })
+
+
+                    break;
+            }
+
+        }
+        function showDetailsModal(type,url,data,hideModal) {
+            //alert("value date init: " + dataInit + " - " + dataEnd);
+                    $.ajax({
+                        type: type, // "POST",
+                        url: url,// "ARROBAUrl.Action("Edit", "Users")",
+
+                        data: data//{id:val,partial:true},
+
+                        }).done(function (result) {
+
+                            document.getElementById('modalBody').innerHTML = result;
+                            if (hideModal) {
+                                document.getElementById('showModal').click();
+                            }
+                        
+
+                        }).fail(function (xhr, status, error) {
+                        Swal.fire(
+                        'Error en la transacción!',
+                        'Intentalo de nuevo',
+                        'error'
+                        )
+                        }).always(function () {
+                        // alert(`transacción exitosa`);
+
+                        Swal.close();
+                        //  getAjaxWallet();
+
+                        //document.getElementById("cant-" + val).value = 0;
+
+                        });
+
+        }
+            function shareBalance(val) {
+            var pSaldo = document.getElementById("pMySaldo").value;
+            var saldoGlobal = document.getElementById("mySaldoGlobal").value;
+            var saldoTAE = document.getElementById("mySaldoTAE").value;
+            var comisionTAE = document.getElementById("comisionTAE").value;
+            var alertMsg = "";
+            var alertDesc = "";
+            var newSaldo = 1000000;
+            if (pSaldo > 0) {
+                if (val == "btnToTae") {
+                    alertMsg = "Seguro que quieres comprar saldo TAE desde tu salgo Global?";
+                    newSaldo = (+pSaldo * (+comisionTAE / 100)) + +pSaldo;
+                    alertDesc = "Te será abonado: $" + newSaldo;
+                } else if (val == "btnToGlobal") {
+                    newSaldo = (+pSaldo * (+comisionTAE / 100)) + +pSaldo;
+                    alertMsg = 'Seguro que quieres transpasar saldo TAE a saldo Global?';
+                    alertDesc = "Será descontado: $" + newSaldo+" de tu saldo TAE";
+                } else {
+                    alertMsg = "Error desconocido";
+                }
+
+                var type = "POST";
+                var url = "@Url.Action("UpdateWallet", "Users")";
+                var data = {};
+                swal.fire({
+                    title: alertMsg,
+                    text: alertDesc,
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            switch (val) {
+                                case 'btnToTae':
+
+                                    data = {
+                                        Id: 0,
+                                        OperacionDesc: "Compra-TAE",
+                                        Monto: pSaldo
+                                    };
+                                   // var newSaldo = (+pSaldo * +comisionTAE) + +pSAldo;
+
+                                    saldoGlobal >= pSaldo ? sendAjax(type, url, data)
+                                        : swal.fire("No tienes suficiente saldo para la operación!", "Petición cancelada", "error");
+
+
+                                    break;
+                                case 'btnToGlobal':
+                                    data = {
+                                        Id: 0,
+                                        OperacionDesc: "Traspaso-TAE",
+                                        Monto: pSaldo
+                                    };
+
+                                    console.log("newSaldo: " + newSaldo);
+                                    newSaldo <= saldoTAE ? sendAjax(type, url, data)
+                                        : swal.fire("No tienes suficiente saldo para la operación!", "Petición cancelada", "error");
+
+
+                                    break;
+                                default:
+                                    alert("ninguna anterior: " + pTAE + " " + pGoblal);
+                                    break;
+                            }//end switch
+
+                        }//end (willDelete)
+                        else {
+                            swal.fire("Operación cancelada", "Petición cancelada", "error");
+                        }//end else
+                    });
+            } else {
+                swal.fire("Cantidad Incorrecta", "Petición cancelada", "error");
+            }
+            //alert("hello comision: " + pTAE +" "+ pGoblal);
+
+        }
+    function sendAjax(type, url, data, operation) {
+        let timerInterval
+        Swal.fire({
+            title: 'Procesando tu petición!',
+            timerProgressBar: true,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+
+            },
+            onClose: () => {
+                clearInterval(timerInterval)
+            }
+        }).then((result) => {
+            /* Read more about handling dismissals below */
+            if (result.dismiss === Swal.DismissReason.timer) {
+                console.log('I was closed by the timer')
+            }
+        })
+             $.ajax({
+                    type: type,// "POST",
+                    url: url, //"@Url.Action("UpdateWallet", "Users")",
+
+                 data: data,
+
+                }).done(function (result) {
+
+                    if (result != -999.99) {
+
+                        //postActions(operation, result, id);
+                        getAjaxWallet();
+                    } else {
+                        Swal.fire(
+                            'Error en la fucking transaction!',
+                            'Intentalo de nuevo',
+                            'error'
+                        )
+                    }
+
+                    }).fail(function (xhr, status, error) {
+                        Swal.fire(
+                            'Error en la transacción!',
+                            'Intentalo de nuevo',
+                            'error'
+                        )
+                    }).always(function () {
+                        // alert(`transacción exitosa`);
+
+                        Swal.close();
+                   //  getAjaxWallet();
+
+                        //document.getElementById("cant-" + val).value = 0;
+
+                    });
+
+    }
+         function getAjaxWallet(val) {
+         document.getElementById("errorLbl").innerHTML = '';
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetSaldo", "Users")",
+
+
+                    // dataType: 'json',
+                    //contentType: false,
+                    // processData: false,
+
+                })
+                    .done(function (result) {
+
+                        //alert(`wallet return` + error);
+
+                        document.getElementById("walletDetail").innerHTML = result;
+
+
+
+                    })
+                    // Se ejecuta si se produjo un error.
+
+                    .fail(function (xhr, status, error) {
+                       // alert(`Saldo insuficiente` + error);
+
+                        document.getElementById("errorLbl").innerHTML = 'Error al recuperar datos de cartera';
+
+                    })
+
+                    .always(function () {
+                        //alert(`transacción exitosa`);
+
+                        document.getElementById("cant-" + val).value = 0;
+
+                    });
+
+
+
+    }
+
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

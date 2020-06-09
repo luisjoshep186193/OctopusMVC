@@ -1,0 +1,90 @@
+@model Octopus.Models.UsuarioRegion
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div id="forma-@Model.UserId">
+    <h3>@Model.Region.Carrier.CarrierName<small>@Model.Region.RegionName</small></h3>
+    <hr />
+    <div class="container">
+        <div class="col-md-4 form-inline">
+            <a class="col-12"> @ViewBag.successMsg</a>
+
+            <form asp-action="Create" class="form-inline formaajax" method="POST" data-ajax="true" data-ajax-update="forma">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="UserId" class="form-control" value="@Model.UserId" />
+                <input type="hidden" asp-for="Region" class="form-control" value="@Model.Region" />
+                <input type="hidden" asp-for="RegionId" class="form-control" value="@Model.RegionId" />
+                <div class="form-group">
+                    <label asp-for="Comision" class="control-label"></label>
+                    <input asp-for="Comision" class="form-control" />
+                    <label class="form-check-label">
+                        Activo <input class="form-check-input" asp-for="Status" />
+                    </label>
+                    @if (ViewBag.editar == true)
+                    {
+                        <input type="submit" value="Editar" class="btn btn-success" />
+                    }
+                    else
+                    {
+                        <input type="submit" value="Asignar" class="btn btn-primary" />
+                    }
+
+                    <span asp-validation-for="Comision" class="text-danger"></span>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+
+    $(function () {
+        document.getElementsByClassName("formaajax").submit(function (e) {
+
+                e.preventDefault();
+
+                //alert(`Status: ok, Status Text: esta bien`);
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("Create","UserRegions")",
+                    data: {
+                        RegionId: "mi regionid",
+                        UserId: "mi userid",
+                        Comision:5,
+                        Status:true,
+                        ComisionTAE:3
+                    },
+
+                   // dataType: 'json',
+                    //contentType: false,
+                   // processData: false,
+                })
+                .done(function (result) {
+
+                    alert(`fue y vino bien`);
+                    $("#forma-@Model.UserId").html(result);
+
+                })
+                // Se ejecuta si se produjo un error.
+                .fail(function (xhr, status, error) {
+                    alert(`fue y vino mal` + error);
+
+                })
+                // Hacer algo siempre, haya sido exitosa o no.
+                .always(function () {
+                    alert(`fue y vino`);
+
+                });
+
+            });
+        });
+</script>
+}

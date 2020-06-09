@@ -1,0 +1,163 @@
+@model Octopus.Models.User
+
+@{
+    bool isAdmin = ViewBag.isAdmin;
+    string userId = Model.Id;
+}
+
+
+<div>
+    <a class="btn btn-danger" asp-action="Index">Regresar</a>
+</div>
+
+<hr />
+<div class="col-12 col-md-6 col-md-offset-4 container" style="border-radius:10px; background-color:azure">
+    <h4 class="mt-5 text-center" style="background-color:blueviolet;border-radius:5px;color:white">Usuario <small>@Model.UserName</small></h4>
+    <div class="col-12">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="CreatedBy" class="form-control" />
+            <input type="hidden" asp-for="NormalizedEmail" class="form-control" />
+            <input type="hidden" asp-for="PasswordHash" class="form-control" />
+            <input type="hidden" asp-for="CarteraId" class="form-control" />
+            <input type="hidden" asp-for="SecurityStamp" class="form-control" />
+            <input type="hidden" asp-for="ConcurrencyStamp" class="form-control" />
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CarteraId" />
+            <input type="hidden" asp-for="UserName" class="form-control" />
+            <input type="hidden" asp-for="NormalizedUserName" class="form-control" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (isAdmin)
+            {
+                <div class="container form-inline mt-10 mb-10" style="background-color:aqua; border-radius:10px;">
+                    <h6 class="col-12">Roles Asignados:</h6>
+                    <hr />
+                    @foreach (string rol in ViewBag.rolesUser)
+                    {
+                        <div style="margin-left:10px;" id="div-@rol" class="form-group">
+                            <label class="form-control">@rol</label>
+                            <button style="margin-left:10px;" type="button" onclick="deleteRol(value);" value="@rol" class="btn btn-sm btn-danger">X</button>
+                        </div>
+
+                    }
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label asp-for="Rol" class="control-label"></label>
+                    <select asp-for="Rol" class="form-control" asp-items="ViewBag.Rol"></select>
+                </div>
+
+            }
+            <div class="form-group">
+                <label asp-for="Nombre" class="control-label"></label>
+                <input asp-for="Nombre" class="form-control" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PhoneNumberConfirmed" /> @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="EmailConfirmed" /> @Html.DisplayNameFor(model => model.EmailConfirmed)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="TwoFactorEnabled" /> @Html.DisplayNameFor(model => model.TwoFactorEnabled)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="LockoutEnd" class="control-label"></label>
+                <input asp-for="LockoutEnd" class="form-control" />
+                <span asp-validation-for="LockoutEnd" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="LockoutEnabled" /> @Html.DisplayNameFor(model => model.LockoutEnabled)
+                </label>
+            </div>
+            <input type="hidden" asp-for="AccessFailedCount" class="form-control" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+        function deleteRol(val) {
+            let timerInterval
+            Swal.fire({
+                title: 'Procesando tu petición!',
+                timerProgressBar: true,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+
+                },
+                onClose: () => {
+                    clearInterval(timerInterval)
+                }
+            }).then((result) => {
+                /* Read more about handling dismissals below */
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    console.log('I was closed by the timer')
+                }
+            });
+               $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("DeleteRol", "Users")",
+                   data: { name: val, userId : "@userId"}
+
+                    // dataType: 'json',
+                    //contentType: false,
+                    // processData: false,
+
+                })
+                    .done(function (result) {
+
+                        //alert(`wallet return` + error);
+
+                        if (result) {
+                            document.getElementById("div-"+val).hidden = true;
+                        }
+                       // 
+
+
+
+                    })
+                    // Se ejecuta si se produjo un error.
+
+                    .fail(function (xhr, status, error) {
+                       // alert(`Saldo insuficiente` + error);
+                        Swal.close();
+                   //     document.getElementById("errorLbl").innerHTML = 'Error al recuperar datos de cartera';
+
+                    })
+
+                    .always(function () {
+                        //alert(`transacción exitosa`);
+
+                        Swal.close();
+                      //  document.getElementById("cant-" + val).value = 0;
+
+                    });
+        }
+
+</script>
+}
+       

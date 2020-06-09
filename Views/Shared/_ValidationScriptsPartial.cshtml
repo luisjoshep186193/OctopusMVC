@@ -1,0 +1,56 @@
+﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    function calculateDate(val) {
+        var value = val.value;
+       // var name = document.getElementById("precioHora").value;
+        var id = val.id;
+
+        var entryDate = new Date(value);
+        var currentDate = new Date();
+        if (entryDate < currentDate) {
+            var dateStart = document.getElementById("DateStart").value;
+            var dateEnd = document.getElementById("DateEnd").value;
+            const date1 = new Date(dateStart);
+            const date2 = new Date(dateEnd);
+            if (dateStart < dateEnd) {
+
+                const diffTime = Math.abs(date2 - date1);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+                const diffMins = Math.ceil(diffTime / (1000 * 60));
+                console.log(diffTime + " milliseconds");
+                console.log(diffDays + " days");
+                
+              //  document.getElementById("totalCant").value = +name * +diffHours;
+                if (id == "DateStart") {
+                    document.getElementById("dateInit").value = value;
+                } else {
+                    document.getElementById("dateEnd").value = value;
+                }
+                //alert(document.getElementById("dateInit").value + " " + document.getElementById("dateEnd").value)
+
+            } else {
+                if (id == "DateStart") {
+                    document.getElementById("DateEnd").value = value;
+                    document.getElementById("dateEnd").value = value;
+                } else {
+                    document.getElementById("DateStart").value = value;
+                    document.getElementById("dateInit").value = value;
+                }
+                //alert("Fecha de fin debe ser menor que fecha actual");
+                //document.getElementById("horasRes").value = 1;
+              //  document.getElementById("totalCant").value = name;
+            }
+        } else {
+          //  document.getElementById("errorFormLbl").innerHTML = "La fecha ingresada debe ser mayor a la actual. "
+
+            val.value = value;
+            //document.getElementById("horasRes").value = 1;
+           // document.getElementById("totalCant").value = name;
+        }
+       // document.getElementById("lugaresSelect").value = 1;
+
+    }
+</script>

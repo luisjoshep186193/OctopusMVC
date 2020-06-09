@@ -1,0 +1,104 @@
+@model IEnumerable<Octopus.Models.UsuarioRegion>
+
+@inject Octopus.Data.ApplicationDbContext context
+@{//@model dynamic
+    ViewData["Title"] = "Index";
+    var regiones = ViewBag.regions;
+    var userId = ViewBag.userId;
+}
+<h1>Index</h1>
+
+<p>
+    @Html.ActionLink("Omitir", "Index", "Users", null, new { @Class = "btn btn-Success" })
+</p>
+@if (Model.Count() != 0)
+{
+    foreach (var region in Model)
+    {
+        await Html.RenderPartialAsync("~/Views/UserRegions/Edit.cshtml", region);
+    }
+
+}
+else
+{
+    @foreach (Octopus.Models.Region region in regiones)
+    {
+        await Html.RenderPartialAsync("~/Views/UserRegions/Create.cshtml", new Octopus.Models.UsuarioRegion() { Status = true, UserId = userId, RegionId = region.Id, Region = region }); //as IDictionary<string, object>);
+
+        <!--form method="post" asp-action="Create" asp-controller="UserRegions"  data-content="" data="">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label">Region</label>
+                <input class="form-control" name="RegionId" value="" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">UserId</label>
+                <input class="form-control" name="UserId" value=""/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Comision</label>
+                <input name="Comision" #Comision class="form-control" />
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" name="Status" />
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form-->
+    }
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+        function sendAjaxMsg(val) {
+            var comision = document.getElementById("comision-" + val).value;
+            var userId = document.getElementById("usId-" + val).value;
+            var regionId = document.getElementById("regId-" + val).value;
+            var status = document.getElementById("status-" + val).checked;
+
+            //alert("hello comision: " + comision + " userId " + userId + " regionId " + regionId + " status" + status);
+
+            $.ajax({
+            type: "POST",
+            url: "@Url.Action("Edit","UserRegions")",
+            data: {
+                Id: val,
+                RegionId: regionId,
+                UserId: userId,
+                Comision: comision,
+                Status: status
+            },
+
+            // dataType: 'json',
+            //contentType: false,
+            // processData: false,
+
+        })
+            .done(function (result) {
+
+                //alert(`fue y vino bien`);
+                document.getElementById("error-" + val).innerHTML = "Registro actualizado";
+                document.getElementById("btn-" + val).classList.remove('btn-primary');
+                document.getElementById("btn-" + val).classList.add('btn-success');
+
+            })
+            // Se ejecuta si se produjo un error.
+            .fail(function (xhr, status, error) {
+                //alert(`fue y vino mal` + error);
+
+            })
+
+            .always(function () {
+               // alert(`fue y vino`);
+
+            });
+        }
+
+</script>
+
+
+}

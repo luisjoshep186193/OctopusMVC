@@ -1,0 +1,40 @@
+@model IEnumerable<Octopus.Models.CarteraTransaction>
+
+@{
+    ViewData["Title"] = "Mis Transacciones";
+}
+
+
+<div class="row">
+    <div class="col-5">
+        <h7>Operación</h7>
+    </div>
+    <div class="col-3">
+        <h7>Cantidad </h7>
+    </div>
+    <div class="col-4">
+        <h7>Fecha</h7>
+       
+    </div>
+
+</div>
+@foreach (var item in Model)
+{
+    <div class="row">
+        <div class="col-5">
+            <small>@Html.DisplayFor(modelItem => item.OperacionDesc)</small>
+        </div>
+        <div class="col-3">
+            <small>@Html.DisplayFor(modelItem => item.Monto)</small>
+        </div>
+        <div class="col-4">
+            <small>@Html.DisplayFor(modelItem => item.FechaOperation)</small>
+
+        </div>
+
+    </div>
+
+}
+<div class="row" style="max-height:30px">
+    <a class="btn btn-sm btn-block btn-outline-primary col-8 mx-auto" id="getReporteAll" name="Mis Movimientos" onclick="showModal(this)">Reporte Detallado</a>
+</div>

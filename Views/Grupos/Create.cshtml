@@ -1,0 +1,90 @@
+﻿@model Octopus.Models.Grupo
+
+@{
+    ViewData["Title"] = "Create";
+    string userId = ViewBag.userId;
+    string message = ViewBag.message;
+    //var userId = "asdjas";
+}
+<h1>sigue en groups div</h1>
+<div id="mainForm">
+    <h4>Nuevo Grupo</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <label class="text-danger">@message</label>
+            <form  id="AjaxForm" class="form" >
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" value="@userId" id="OwnerId" asp-for="OwnerId" />
+                <span asp-validation-for="OwnerId" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="GroupName" class="control-label"></label>
+                    <input id="GroupName" asp-for="GroupName" class="form-control" />
+                    <span asp-validation-for="GroupName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="button" id="SubmitBtn" name="@userId" onclick="sendAjaxMsg(name)" value="Crear" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+
+     
+            //$("#AjaxForm").submit(function (e) {
+
+    function sendAjaxMsg(val) {
+        alert("hello" + val);
+    }
+    function sendAjax() {
+
+        // e.preventDefault();
+
+        //alert(`Status: ok, Status Text: esta bien`);
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("Create","Grupos")",
+            data: {
+                GroupName: "jgfjgjhg",
+                Id: 0,
+                OwnerId: "04a5ec97-feb7-4644-b305-10a3eb62b258"
+            },
+
+            // dataType: 'json',
+            //contentType: false,
+            // processData: false,
+        })
+            .done(function (result) {
+
+                alert(`fue y vino bien`);
+                $("#mainForm").html(result);
+
+            })
+            // Se ejecuta si se produjo un error.
+            .fail(function (xhr, status, error) {
+                alert(`fue y vino mal` + error);
+
+            })
+            
+            .always(function () {
+                alert(`fue y vino`);
+
+            });
+    }; 
+               
+        
+       
+</script>
+}

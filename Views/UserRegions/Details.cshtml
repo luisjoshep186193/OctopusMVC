@@ -1,0 +1,39 @@
+@model Octopus.Models.UsuarioRegion
+
+@{
+    ViewData["Title"] = "Details";
+}
+<hr />
+<div>
+
+    @Html.ActionLink("Regresar a Lista", "CreateUserRegions", "UserRegions", new { userId = @Model.UserId }, new { @Class = "btn btn-danger" })
+</div>
+<h4>Detalles</h4>
+
+<div>
+
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Region)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Region.RegionName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Comision)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Comision)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+
+
+    </dl>
+</div>
+

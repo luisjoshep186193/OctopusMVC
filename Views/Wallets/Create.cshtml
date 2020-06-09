@@ -1,0 +1,49 @@
+@model Octopus.Models.Wallet
+
+@{
+    ViewData["Title"] = "Create";
+    Octopus.Models.User user = ViewBag.user;
+}
+
+<h1>Crear Nueva</h1>
+<div>
+    <a class="btn btn-outline-danger" asp-action="Index">Back to List</a>
+</div>
+<h4>Cartera</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SaldoTAE" class="control-label"></label>
+                <input asp-for="SaldoTAE" class="form-control" />
+                <span asp-validation-for="SaldoTAE" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SaldoNormal" class="control-label"></label>
+                <input asp-for="SaldoNormal" class="form-control" />
+                <span asp-validation-for="SaldoNormal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" value="@user.Id" type="hidden" class="form-control"/>
+                <input value="@user.Nombre" disabled class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="ComisionTAE" class="control-label"></label>
+                <input asp-for="ComisionTAE" class="form-control" />
+                <span asp-validation-for="ComisionTAE" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

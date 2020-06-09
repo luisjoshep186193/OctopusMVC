@@ -1,0 +1,57 @@
+@model IEnumerable<Octopus.Models.Wallet>
+
+@{
+    ViewData["Title"] = "Index";
+
+}
+<div class="row form-inline">
+    <a class="btn btn-danger " asp-controller="Users" asp-action="Index">Usuarios</a>
+    <a class="btn btn-primary" asp-action="Create">Crear nuevo</a>
+</div>
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.SaldoTAE)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SaldoNormal)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ComisionTAE)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.User)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SaldoTAE)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SaldoNormal)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ComisionTAE)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Nombre)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}

@@ -1,0 +1,562 @@
+@model IEnumerable<Octopus.Models.User>
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@{
+
+}
+
+
+<!--a id="errorLbl" class="text-danger col-12"></!--a-->
+<div class="main col-lg-12 form-inline">
+ 
+    <div class="col-12">
+        <a class="btn btn-primary btn-block col-5 mx-auto mt-10 mb-10" asp-area="Identity" asp-page="/Account/Register">Nuevo Usuario</a>
+    </div>
+    <input type="hidden" onclick="getAjaxWallet(name)" id="btnGetW" name="btnGetW"
+           value="Refresh" class="btn btn-danger" />
+
+
+</div>
+<table class="table table-striped" style="margin-left:0px !important">
+    <thead class="thead-dark">
+        <tr>
+
+            <th>
+                Cliente
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+
+
+            <th>
+                Inicial
+            </th>
+            <th>
+                TAE
+            </th>
+            <th>
+                Comisión
+            </th>
+            <th>
+                Servicios
+            </th>
+            <th>
+                Venta
+            </th>
+            <th>
+                Enviado
+            </th>
+            <th>
+                Asignado
+            </th>
+            <th>
+                Saldo
+            </th>
+            <th>
+                Transacciones
+            </th>
+
+            <th>
+                Acciones
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+
+
+            @if (item.Cartera != null)
+            {
+                <td>
+                    <a>@item.Cartera.Inicial</a>
+                </td>
+                <td>
+                    <input type="hidden" id="stae-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoTAE" value="@String.Format("{0:0.00}",@item.Cartera.SaldoTAE)" />
+                    <a id="atae-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.SaldoTAE)</a>
+                </td>
+                <td>
+                    <a>@item.Cartera.ComisionTAE</a>
+                </td>
+                <td>
+                    <a>@item.Cartera.CuotaServicios</a>
+                </td>
+
+                <td>
+                    <a>@item.Cartera.Enviado</a>
+                </td>
+                <td>
+                    <a>@item.Cartera.Asignado</a>
+
+                </td>
+                <td>
+                    <input type="hidden" id="sasig-@item.Cartera.Id" disabled step=".01" asp-for="@item.Cartera.Asignado" value="@String.Format("{0:0.00}",@item.Cartera.Asignado)" />
+                    <a id="aasig-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.Asignado)</a>
+                </td>
+                <td>
+                    <input type="hidden" id="sglob-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoNormal" value="@String.Format("{0:0.00}",@item.Cartera.SaldoNormal)" />
+                    <a id="aglob-@item.Cartera.Id">@item.Cartera.SaldoNormal</a>
+                </td>
+                <td>
+                    <div class="row">
+                        @if (User.FindFirstValue(ClaimTypes.NameIdentifier) == item.Id)
+                        {
+                            <input type="number" disabled id="cant-@item.Cartera.Id" step=".01" value="0" />
+                        }
+                        else
+                        {
+
+                            <input type="number" id="cant-@item.Cartera.Id" step=".01" value="0" />
+                        }
+
+                    </div>
+                    <div class="row">
+
+                        <input type="button" onclick="ajaxSaldoN(name)" id="btnGlobal-@item.Cartera.Id" name="@item.Cartera.Id"
+                               value="Asignar" class="btn btn-primary" />
+                    </div>
+
+                </td>
+
+
+            }
+            else
+            {
+                <td>
+                    0
+                </td>
+                <td>
+                    0
+                </td>
+
+                <td>
+                    0
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    0
+                    <input type="button" onclick="sendAjaxMsg(name)" id="btn-@item.Id" name="@item.Id" value="Asignar" class="btn btn-primary" />
+                    @Html.ActionLink("Crear", "CrearUnWallet", "Carteras", new { userId = @item.Id }, new { @class = "btn btn-primary" })
+                </td>
+
+            }
+            <td>
+                <!--a class="btn btn-block btn-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a-->
+                <button class="btn btn-block btn-warning" onclick="showDetailsModal(value)"  value="@item.Id">Detalles</button>
+                <!--a asp-action="Delete" class="btn btn-block btn-danger" asp-route-id="@item.Id">Global</!--a-->
+                <!--a class="btn btn-outline-success btn-block" asp-controller="Wallets" asp-action="CrearUnWallet">Wallet</a-->
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+
+    /*function showDetailsModal(val) {
+        //alert("Mostrar modal: " + val);
+
+        $.ajax({
+            type: "GET",// "POST",
+            url: "ARROBAUrl.Action("Edit", "Users")",
+
+            data: {id:val,partial:true},
+
+                }).done(function (result) {
+
+                    document.getElementById('modalBody').innerHTML = result;
+                    document.getElementById('showModal').click();
+
+                    }).fail(function (xhr, status, error) {
+                        Swal.fire(
+                            'Error en la transacción!',
+                            'Intentalo de nuevo',
+                            'error'
+                        )
+                    }).always(function () {
+                        // alert(`transacción exitosa`);
+
+                        Swal.close();
+                   //  getAjaxWallet();
+
+                        //document.getElementById("cant-" + val).value = 0;
+
+                    });
+    }*/
+      /*  function shareBalance(val) {
+            var pSaldo = document.getElementById("pMySaldo").value;
+            var saldoGlobal = document.getElementById("mySaldoGlobal").value;
+            var saldoTAE = document.getElementById("mySaldoTAE").value;
+            var comisionTAE = document.getElementById("comisionTAE").value;
+            var alertMsg = "";
+            var alertDesc = "";
+            var newSaldo = 1000000;
+            if (pSaldo > 0) {
+                if (val == "btnToTae") {
+                    alertMsg = "Seguro que quieres comprar saldo TAE desde tu salgo Global?";
+                    newSaldo = (+pSaldo * (+comisionTAE / 100)) + +pSaldo;
+                    alertDesc = "Te será abonado: $" + newSaldo;
+                } else if (val == "btnToGlobal") {
+                    newSaldo = (+pSaldo * (+comisionTAE / 100)) + +pSaldo;
+                    alertMsg = 'Seguro que quieres transpasar saldo TAE a saldo Global?';
+                    alertDesc = "Será descontado: $" + newSaldo+" de tu saldo TAE";
+                } else {
+                    alertMsg = "Error desconocido";
+                }
+
+                var type = "POST";
+                var url = "AT------Url.Action("UpdateWallet", "Users")";
+                var data = {};
+                swal.fire({
+                    title: alertMsg,
+                    text: alertDesc,
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            switch (val) {
+                                case 'btnToTae':
+
+                                    data = {
+                                        Id: 0,
+                                        OperacionDesc: "Compra-TAE",
+                                        Monto: pSaldo
+                                    };
+                                   // var newSaldo = (+pSaldo * +comisionTAE) + +pSAldo;
+
+                                    saldoGlobal >= pSaldo ? sendAjax(type, url, data)
+                                        : swal.fire("No tienes suficiente saldo para la operación!", "Petición cancelada", "error");
+
+
+                                    break;
+                                case 'btnToGlobal':
+                                    data = {
+                                        Id: 0,
+                                        OperacionDesc: "Traspaso-TAE",
+                                        Monto: pSaldo
+                                    };
+
+                                    console.log("newSaldo: " + newSaldo);
+                                    newSaldo <= saldoTAE ? sendAjax(type, url, data)
+                                        : swal.fire("No tienes suficiente saldo para la operación!", "Petición cancelada", "error");
+
+
+                                    break;
+                                default:
+                                    alert("ninguna anterior: " + pTAE + " " + pGoblal);
+                                    break;
+                            }//end switch
+
+                        }//end (willDelete)
+                        else {
+                            swal.fire("Operación cancelada", "Petición cancelada", "error");
+                        }//end else
+                    });
+            } else {
+                swal.fire("Cantidad Incorrecta", "Petición cancelada", "error");
+            }
+            //alert("hello comision: " + pTAE +" "+ pGoblal);
+
+        }
+    function sendAjax(type, url, data, operation) {
+        let timerInterval
+        Swal.fire({
+            title: 'Procesando tu petición!',
+            timerProgressBar: true,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+
+            },
+            onClose: () => {
+                clearInterval(timerInterval)
+            }
+        }).then((result) => {
+
+            if (result.dismiss === Swal.DismissReason.timer) {
+                console.log('I was closed by the timer')
+            }
+        })
+             $.ajax({
+                    type: type,// "POST",
+                    url: url, //"AT-----Url.Action("UpdateWallet", "Users")",
+
+                 data: data,
+
+                }).done(function (result) {
+
+                    if (result != -999.99) {
+
+                        //postActions(operation, result, id);
+                        getAjaxWallet();
+                    } else {
+                        Swal.fire(
+                            'Error en la fucking transaction!',
+                            'Intentalo de nuevo',
+                            'error'
+                        )
+                    }
+
+                    }).fail(function (xhr, status, error) {
+                        Swal.fire(
+                            'Error en la transacción!',
+                            'Intentalo de nuevo',
+                            'error'
+                        )
+                    }).always(function () {
+                        // alert(`transacción exitosa`);
+
+                        Swal.close();
+                   //  getAjaxWallet();
+
+                        //document.getElementById("cant-" + val).value = 0;
+
+                    });
+
+    }*/
+
+
+    function postActions(operation, result, id) {
+
+        Swal.fire(
+            "Operación exitosa: "+operation,
+            " resultado: " + result + " id " + id,
+            'success'
+        )
+        switch (operation) {
+
+        }
+    }
+
+        function sendAjaxMsg(val) {
+            //document.getElementById("errorLbl").innerHTML = '';
+            //alert("hello comision: " + val);
+
+            var cant = document.getElementById("cant-" + val).value;
+            var saldoTAE = document.getElementById("stae-" + val).value;
+
+            /* var regionId = document.getElementById("regId-" + val).value;
+            //var status = document.getElementById("status-" + val).checked;*/
+
+            //alert("hello saldoTae: " + saldoTAE);
+
+            //var comision =
+            //saldoTAE = + saldoTAE + +cant;
+            var opDesc = cant < 0 ? "Reverso-TAE" : "Abono-TAE";
+
+            if (saldoTAE >= 0 && cant != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("NewTransactionTAE", "Users")",
+                    data: {
+                        Id: 0,
+                        OperacionDesc: opDesc,
+                        Monto: cant,
+                        CarteraId: val,
+                    },
+
+                    // dataType: 'json',
+                    //contentType: false,
+                    // processData: false,
+
+                })
+                    .done(function (result) {
+                        getAjaxWallet();
+                        if (result != -999.99) {
+                            document.getElementById("atae-" + val).classList.add('text-warning');
+
+                            // saldoTAE = + saldoTAE + +cant;
+
+                           // alert(`Nuevo Saldo: ` + result.toFixed(2));
+
+                            document.getElementById("atae-" + val).innerHTML = result.toFixed(2);
+                            document.getElementById("aasig-" + val).innerHTML = result.toFixed(2);
+                        } else {
+                            document.getElementById("atae-" + val).classList.add('text-danger');
+                            document.getElementById("errorLbl").innerHTML = 'No tiene saldo suficiente para realizar la transacción ' + opDesc;
+                           // alert(`No tienes saldo suficiente para realizar la transacción` + opDesc);
+                        }
+
+                        // document.getElementById("btn-" + val).classList.remove('btn-primary');
+                        //document.getElementById("btn-" + val).classList.add('btn-success');
+
+                    })
+                    // Se ejecuta si se produjo un error.
+
+                    .fail(function (xhr, status, error) {
+
+                        //alert(`Saldo insuficiente` + error);
+
+                        document.getElementById("errorLbl").innerHTML = 'Saldo insuficiente';
+
+
+                    })
+
+                    .always(function () {
+                        //alert(`transacción exitosa`);
+
+                        document.getElementById("cant-" + val).value = 0;
+
+                    });
+            } else {
+                alert(`El susuario no tiene saldo suficiente para realizar la transacción` + opDesc);
+            }
+
+
+    }
+
+
+
+        function ajaxSaldoN(val) {
+           // document.getElementById("errorLbl").innerHTML = '';
+            //alert("hello comision: " + val);
+
+            var cant = document.getElementById("cant-" + val).value;
+            var saldoGlobal = document.getElementById("sglob-" + val).value;
+            var saldoTAE = document.getElementById("stae-" + val).value;
+
+            /* var regionId = document.getElementById("regId-" + val).value;
+            //var status = document.getElementById("status-" + val).checked;*/
+
+            //alert("hello saldoTae: " + saldoTAE);
+
+           // saldoGlobal = + saldoGlobal + +cant;
+            var pass = true;
+            if (cant < 0) {
+                var opDesc = "Reverso-Global";
+
+                saldoGlobal = + saldoGlobal + +cant;
+                pass = saldoGlobal < 0 ? false : true;
+            } else {
+
+                var opDesc = "Abono-Global";
+            }
+            saldoTAE = + saldoTAE + +cant;
+
+
+            //alert("saldos " + opDesc + saldoGlobal + cant+ saldoTAE+pass);
+
+
+            if(pass && cant != 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("NewTransactionGlobal", "Users")",
+                    data: {
+                        Id: 0,
+                        OperacionDesc: opDesc,
+                        Monto: cant,
+                        CarteraId: val,
+                    },
+
+                    // dataType: 'json',
+                    //contentType: false,
+                    // processData: false,
+
+                })
+                    .done(function (result) {
+                        getAjaxWallet();
+                        if (result != -999.99) {
+                            document.getElementById("aglob-" + val).classList.add('text-warning');
+
+                            // saldoTAE = + saldoTAE + +cant;
+
+                          //  alert(`Nuevo Saldo: ` + result.toFixed(2));
+
+
+                            document.getElementById("aglob-" + val).innerHTML = result.toFixed(2);
+                            document.getElementById("atae-" + val).innerHTML = saldoTAE.toFixed(2);
+
+                            document.getElementById("stae-" + val).value = saldoTAE.toFixed(2);
+                            document.getElementById("sglob-" + val).value = result.toFixed(2);
+                        } else {
+                            document.getElementById("aglob-" + val).classList.add('text-danger');
+                            document.getElementById("errorLbl").innerHTML = 'No tiene saldo suficiente para realizar la transacción ' + opDesc;
+                           // alert(`No tienes saldo suficiente para realizar la transacción ` + opDesc);
+                        }
+
+                        // document.getElementById("btn-" + val).classList.remove('btn-primary');
+                        //document.getElementById("btn-" + val).classList.add('btn-success');
+
+                    })
+                    // Se ejecuta si se produjo un error.
+
+                    .fail(function (xhr, status, error) {
+
+                        //alert(`Saldo insuficiente` + error);
+
+                        document.getElementById("errorLbl").innerHTML = 'Saldo insuficiente';
+
+                    })
+
+                    .always(function () {
+                        //alert(`transacción exitosa`);
+
+                        document.getElementById("cant-" + val).value = 0;
+
+                    });
+            } else {
+            alert("El susuario no tiene saldo suficiente para " + opDesc + saldoGlobal+ cant);
+            }
+
+
+    }
+   /*  function getAjaxWallet(val) {
+         document.getElementById("errorLbl").innerHTML = '';
+
+                $.ajax({
+                    type: "GET",
+                    url: "AT----Url.Action("GetSaldo", "Users")",
+
+
+                    // dataType: 'json',
+                    //contentType: false,
+                    // processData: false,
+
+                })
+                    .done(function (result) {
+
+                        //alert(`wallet return` + error);
+                        document.getElementById("walletDetail").innerHTML = result;
+
+
+
+                    })
+                    // Se ejecuta si se produjo un error.
+
+                    .fail(function (xhr, status, error) {
+                       // alert(`Saldo insuficiente` + error);
+                        document.getElementById("errorLbl").innerHTML = 'Error al recuperar datos de cartera';
+
+                    })
+
+                    .always(function () {
+                        //alert(`transacción exitosa`);
+
+                        document.getElementById("cant-" + val).value = 0;
+
+                    });
+
+
+
+    }*/
+
+
+</script>
+
+
+}

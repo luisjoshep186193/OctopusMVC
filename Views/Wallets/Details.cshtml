@@ -1,0 +1,27 @@
+@model Octopus.Models.Wallet
+
+@{
+    ViewData["Title"] = "Details";
+  
+}
+
+<div>
+    <h4>Mis Saldos<small>@Html.DisplayFor(model => model.User.Nombre)</small></h4>
+    <hr />
+    <div class="row">
+        <label class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SaldoTAE)
+        </label>
+        <input disabled class = "col-sm-10" value="@String.Format("{0:0.00}",@Model.SaldoTAE)"/>
+        <label class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SaldoNormal)
+        </label>
+        <input disabled class = "col-sm-10" value="@String.Format("{0:0.00}",@Model.SaldoNormal)"/>
+        
+       
+    </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+
+</div>
