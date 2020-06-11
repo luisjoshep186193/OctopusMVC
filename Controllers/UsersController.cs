@@ -78,7 +78,7 @@ namespace Octopus.Controllers
         }
 
         // GET: Users/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string id, bool partial)
         {
             if (id == null)
             {
@@ -96,7 +96,7 @@ namespace Octopus.Controllers
         }
 
         // GET: Users/Create
-        public async Task<IActionResult> CreateAsync()
+        public IActionResult CreateAsync()
         {
            
             return View();
@@ -417,7 +417,7 @@ namespace Octopus.Controllers
             return -999.99;
         }
         [HttpGet]
-        public async Task<bool> DeleteRol(string name, string userId)
+        public async Task<IActionResult> DeleteRol(string name, string userId)
         {
             var rolId = await _context.Roles.Where(s => s.Name == name).FirstOrDefaultAsync();
             if (rolId != null) {
@@ -425,13 +425,11 @@ namespace Octopus.Controllers
                 var roleDeleted = userRole != null ? _context.UserRoles.Remove(userRole) : null;
                 if (roleDeleted != null) {
                     await _context.SaveChangesAsync();
-                    return true;
+                    return RedirectToAction(nameof(Edit),new { id= userId, partial=true});
                 }
                 
             }
-           
-
-            return false;
+            return RedirectToAction(nameof(Edit), new { id = userId, partial = true });
         }
 
         [HttpGet]

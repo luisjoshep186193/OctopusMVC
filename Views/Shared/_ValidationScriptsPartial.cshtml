@@ -2,6 +2,66 @@
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript">
+    function deleteRol(val) {
+
+            let timerInterval
+            Swal.fire({
+                title: 'Procesando tu petición!',
+                timerProgressBar: true,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+
+                },
+                onClose: () => {
+                    clearInterval(timerInterval)
+                }
+            }).then((result) => {
+                /* Read more about handling dismissals below */
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    console.log('I was closed by the timer')
+                }
+            });
+               $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("DeleteRol", "Users")",
+                   data: { name: val, userId : ""}
+
+                    // dataType: 'json',
+                    //contentType: false,
+                    // processData: false,
+
+                })
+                    .done(function (result) {
+
+                        //alert(`wallet return` + error);
+
+                        if (result) {
+                            document.getElementById("div-"+val).hidden = true;
+                        }
+                       //
+
+
+
+                    })
+                    // Se ejecuta si se produjo un error.
+
+                    .fail(function (xhr, status, error) {
+                       // alert(`Saldo insuficiente` + error);
+                        Swal.close();
+                   //     document.getElementById("errorLbl").innerHTML = 'Error al recuperar datos de cartera';
+
+                    })
+
+                    .always(function () {
+                        //alert(`transacción exitosa`);
+
+                        Swal.close();
+                      //  document.getElementById("cant-" + val).value = 0;
+
+                    });
+        }
+
+
     function calculateDate(val) {
         var value = val.value;
        // var name = document.getElementById("precioHora").value;
@@ -22,7 +82,7 @@
                 const diffMins = Math.ceil(diffTime / (1000 * 60));
                 console.log(diffTime + " milliseconds");
                 console.log(diffDays + " days");
-                
+
               //  document.getElementById("totalCant").value = +name * +diffHours;
                 if (id == "DateStart") {
                     document.getElementById("dateInit").value = value;

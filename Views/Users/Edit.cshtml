@@ -10,7 +10,6 @@
     <a class="btn btn-danger" asp-action="Index">Regresar</a>
 </div>
 
-<hr />
 <div class="col-12 col-md-6 col-md-offset-4 container" style="border-radius:10px; background-color:azure">
     <h4 class="mt-5 text-center" style="background-color:blueviolet;border-radius:5px;color:white">Usuario <small>@Model.UserName</small></h4>
     <div class="col-12">
@@ -22,9 +21,11 @@
             <input type="hidden" asp-for="SecurityStamp" class="form-control" />
             <input type="hidden" asp-for="ConcurrencyStamp" class="form-control" />
             <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="CarteraId" />
             <input type="hidden" asp-for="UserName" class="form-control" />
             <input type="hidden" asp-for="NormalizedUserName" class="form-control" />
+            <input hidden class="form-check-input" asp-for="TwoFactorEnabled" /> 
+            <input hidden class="form-check-input" asp-for="PhoneNumberConfirmed" />
+            <input hidden class="form-check-input" asp-for="EmailConfirmed" /> 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @if (isAdmin)
             {
@@ -35,7 +36,7 @@
                     {
                         <div style="margin-left:10px;" id="div-@rol" class="form-group">
                             <label class="form-control">@rol</label>
-                            <button style="margin-left:10px;" type="button" onclick="deleteRol(value);" value="@rol" class="btn btn-sm btn-danger">X</button>
+                            <button style="margin-left:10px;" name="@userId" id="deleteRol" type="button" onclick="showModal(this);" value="@rol" class="btn btn-sm btn-danger">X</button>
                         </div>
 
                     }
@@ -61,21 +62,6 @@
                 <label asp-for="PhoneNumber" class="control-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="PhoneNumberConfirmed" /> @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EmailConfirmed" /> @Html.DisplayNameFor(model => model.EmailConfirmed)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="TwoFactorEnabled" /> @Html.DisplayNameFor(model => model.TwoFactorEnabled)
-                </label>
             </div>
             <div class="form-group">
                 <label asp-for="LockoutEnd" class="control-label"></label>

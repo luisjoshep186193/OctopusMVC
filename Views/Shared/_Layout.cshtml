@@ -16,7 +16,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Recargas" asp-action="Index">Recargas</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Recargas</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -135,10 +135,11 @@
             var name = val.name;
             var value = val.value;
             var showHide = id == "getConsulta" ? false : true;
-
+         
             switch (id) {
                 case 'getConsulta':
                 case 'getReporteAll':
+
                     document.getElementById('modalTitle').innerHTML = name;
                     Swal.fire({
                         title: 'Buscar regargas',
@@ -176,11 +177,37 @@
 
 
                     break;
+                case 'backRecargaList':
+                    showDetailsModal("GET", "@Url.Action("Index", "Recargas")", { id: "", partial: true }, false);
+                    break;
+                case "getRecargaDetail":
+                    //alert(`transacción exitosa ` + name);
+                    showDetailsModal("GET", "@Url.Action("Details", "Recargas")", { id: name, partial: true}, false);
+                    break;
+                case "detailsUser":
+                   // alert("function detailsUser"+name);
+
+                    showDetailsModal("GET", "@Url.Action("Edit", "Users")", { id: name, partial: true}, true);
+                    break;
+                case "deleteRol":
+                    Swal.fire({
+                        title: 'Procesando tu petición!',
+                        timerProgressBar: true,
+                        onBeforeOpen: () => {
+                            Swal.showLoading()
+
+                        }
+                    }).then((result) => {
+
+                    });
+                    //alert(`valores de deleterol ` + id + name + value);
+                    showDetailsModal("GET", "@Url.Action("DeleteRol", "Users")", { name: value, userId: name}, false);
+                    break;
             }
 
         }
         function showDetailsModal(type,url,data,hideModal) {
-            //alert("value date init: " + dataInit + " - " + dataEnd);
+           // alert("showDetailsModal: " );
                     $.ajax({
                         type: type, // "POST",
                         url: url,// "ARROBAUrl.Action("Edit", "Users")",
@@ -188,14 +215,15 @@
                         data: data//{id:val,partial:true},
 
                         }).done(function (result) {
-
+                            //alert("response showdetailsmodal: ");
                             document.getElementById('modalBody').innerHTML = result;
                             if (hideModal) {
                                 document.getElementById('showModal').click();
                             }
-                        
+
 
                         }).fail(function (xhr, status, error) {
+                            alert(`transacción erronea` + error);
                         Swal.fire(
                         'Error en la transacción!',
                         'Intentalo de nuevo',

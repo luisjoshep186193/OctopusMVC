@@ -37,6 +37,7 @@ namespace Octopus.Models
         [DisplayName("Usuario")]
         public string UserId { get; set; }
         public string MontoCant { get; set; }
+        public bool Ok { get; set; }
 
         public Monto Monto { get; set; }
         public Carrier Carrier { get; set; }

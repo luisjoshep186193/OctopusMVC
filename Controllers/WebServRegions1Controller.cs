@@ -11,7 +11,7 @@ using Octopus.Models;
 
 namespace Octopus.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Administrador")]
     public class WebServRegions1Controller : Controller
     {
         private readonly ApplicationDbContext _context;
