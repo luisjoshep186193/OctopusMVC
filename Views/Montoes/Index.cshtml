@@ -1,42 +1,45 @@
 ﻿@model IEnumerable<Octopus.Models.Monto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Montos";
 }
 
-<h1>Index</h1>
+<h3>@ViewBag.Title</h3>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary btn-block mx-auto" asp-action="Create">Agregar Monto</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Carrier)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MontoCant)
-            </th>
-            
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Carrier.CarrierName)
-            </td>
-            <td>
-                $@Html.DisplayFor(modelItem => item.MontoCant).00
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="jumbotron">
+
+    <table class="table table-striped table responsive table-dark" style="margin-left:0px !important">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Carrier)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MontoCant)
+                </th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Carrier.CarrierName)
+                    </td>
+                    <td>
+                        $@Html.DisplayFor(modelItem => item.MontoCant).00
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-warning" onclick="showModal(this)" id="editMonto" name="@item.Id">Editar</a> |
+                        <a class="btn btn-outline-danger" onclick="showModal(this)" id="deleteMonto" name="@item.Id">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>

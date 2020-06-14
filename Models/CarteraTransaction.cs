@@ -10,6 +10,7 @@ namespace Octopus.Models
         public int Id { get; set; }
         [DisplayName("Operación"), Required]
         public string OperacionDesc { get; set; }
+        public string CarrierResponse { get; set; }
         [Required]
         public double Monto { get; set; }
         public DateTime FechaOperation { get; set; }

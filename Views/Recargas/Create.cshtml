@@ -6,7 +6,7 @@
 }
 
 <div class="container contRecargar">
-   
+   <label class="error" style="color:yellow">@errorMsg</label>
     <h3>@ViewData["Title"]</h3>
     <div class="row">
         <div class="col-md-4">
@@ -121,16 +121,7 @@
     <script type="text/javascript">
 
 
-    $(document).ready(function () {
-
-        $('body').on('keyup', 'input.phoneNumber', function () {
-            if ($(this).val().length === this.size) {
-                var input = $('#confirmPhone');
-                input.focus();
-            }
-        });
-
-    });
+  
 
     function validateData() {
         event.preventDefault();
@@ -162,8 +153,16 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Recargar'
         }).then((result) => {
-
+           
             if (result.value) {
+                Swal.fire({
+                    title: 'Procesando tu petición!',
+                    timerProgressBar: true,
+                    onBeforeOpen: () => {
+                        Swal.showLoading()
+
+                    }
+                })
                 $("#createForm").submit();
             }
         })

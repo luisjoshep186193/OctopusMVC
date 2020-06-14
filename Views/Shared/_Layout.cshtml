@@ -86,7 +86,7 @@
         }
     </header>
     <div class="main">
-
+        <button class="btn btn-primary" onclick="showMessage()">Show IP</button>
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -128,14 +128,34 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script type="text/javascript">
         function showMessage() {
-            alert("function showmessage");
+            const ipAPI = '//api.ipify.org?format=json'
+
+            Swal.queue([{
+                title: 'Your public IP',
+                confirmButtonText: 'Show my public IP',
+                text:
+                    'Your public IP will be received ' +
+                    'via AJAX request',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return fetch(ipAPI)
+                        .then(response => response.json())
+                        .then(data => Swal.insertQueueStep(data.ip))
+                        .catch(() => {
+                            Swal.insertQueueStep({
+                                icon: 'error',
+                                title: 'Unable to get your public IP'
+                            })
+                        })
+                }
+            }])
         }
         function showModal(val) {
             var id = val.id;
             var name = val.name;
             var value = val.value;
             var showHide = id == "getConsulta" ? false : true;
-         
+
             switch (id) {
                 case 'getConsulta':
                 case 'getReporteAll':
@@ -188,6 +208,31 @@
                    // alert("function detailsUser"+name);
 
                     showDetailsModal("GET", "@Url.Action("Edit", "Users")", { id: name, partial: true}, true);
+                    break;
+                case "editMonto":
+                   // alert("function detailsUser"+name);
+
+                    showDetailsModal("GET", "@Url.Action("Edit", "Montoes")", { id: name, partial: true}, true);
+                    break;
+                case "deleteMonto":
+                   // alert("function detailsUser"+name);
+
+                    showDetailsModal("GET", "@Url.Action("Delete", "Montoes")", { id: name, partial: true}, true);
+                    break;
+                 case "editWS":
+                   // alert("function detailsUser"+name);
+
+                    showDetailsModal("GET", "@Url.Action("Edit", "WebServRegions1")", { id: name, partial: true}, true);
+                    break;
+                case "deleteWS":
+                   // alert("function detailsUser"+name);
+
+                    showDetailsModal("GET", "@Url.Action("Delete", "WebServRegions1")", { id: name, partial: true}, true);
+                    break;
+                case "createWS":
+                   // alert("function detailsUser"+name);
+
+                    showDetailsModal("GET", "@Url.Action("Create", "WebServRegions1")", { }, true);
                     break;
                 case "deleteRol":
                     Swal.fire({

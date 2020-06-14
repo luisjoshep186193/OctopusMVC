@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Octopus.Data;
 
 namespace Octopus.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200612224016_multiWebServData")]
+    partial class multiWebServData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,9 +353,6 @@ namespace Octopus.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("RecargaReq")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResponseFromCarrier")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StatusCode")

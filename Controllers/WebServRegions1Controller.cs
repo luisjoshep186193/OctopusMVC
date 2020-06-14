@@ -56,7 +56,7 @@ namespace Octopus.Controllers
              ViewData["WebServiceId"] = new SelectList(_context.WebServices.Include(w => w.WebServDesc), "Id", "WSDesc");
 
             //ViewData["WebServiceId"] = new SelectList(_context.WebServices, "Id", "Id");
-            return View();
+            return PartialView();
         }
 
         // POST: WebServRegions1/Create
@@ -78,7 +78,7 @@ namespace Octopus.Controllers
         }
 
         // GET: WebServRegions1/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, bool partial)
         {
             if (id == null)
             {
@@ -92,6 +92,8 @@ namespace Octopus.Controllers
             }
             ViewData["RegionId"] = new SelectList(_context.Regions.Where(i=>i.Id == webServRegion.RegionId).AsNoTracking(), "Id", "RegionName", webServRegion.RegionId);
             ViewData["WebServiceId"] = new SelectList(_context.WebServices.Include(w => w.WebServDesc).AsNoTracking(), "Id", "WSDesc", webServRegion.WebServiceId);
+            if(partial)
+                return PartialView(webServRegion);
             return View(webServRegion);
         }
 
@@ -129,11 +131,11 @@ namespace Octopus.Controllers
             }
             ViewData["RegionId"] = new SelectList(_context.Regions.Where(i => i.Id == webServRegion.RegionId).AsNoTracking(), "Id", "RegionName", webServRegion.RegionId);
             ViewData["WebServiceId"] = new SelectList(_context.WebServices.Include(w => w.WebServDesc).AsNoTracking(), "Id", "WSDesc", webServRegion.WebServiceId);
-            return View(webServRegion);
+            return PartialView(webServRegion);
         }
 
         // GET: WebServRegions1/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, bool partial)
         {
             if (id == null)
             {
@@ -148,7 +150,8 @@ namespace Octopus.Controllers
             {
                 return NotFound();
             }
-
+            if (partial)
+                return PartialView(webServRegion);
             return View(webServRegion);
         }
 

@@ -17,12 +17,12 @@
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="Input.PhoneNumber"></label>
-                        <input asp-for="Input.PhoneNumber" type="number" class="form-control" />
+                        <input id="phoneNumber" asp-for="Input.PhoneNumber" type="number" class="form-control" />
                         <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Input.Password"></label>
-                        <input asp-for="Input.Password" class="form-control" />
+                        <input id="confirmPhone" asp-for="Input.Password" class="form-control" />
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -36,17 +36,7 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block">Log in</button>
                     </div>
-                    <div class="form-group">
-                        <!-->p>
-                            <a id="forgot-password" asp-page="./ForgotPassword">Olvide mi contraseña</a>
-                        </p>
-                        <p>
-                            <a asp-page="./Register" asp-route-returnUrl="ARROBAModel.ReturnUrl">Registrate</a>
-                        </p>
-                        <p>
-                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                        </p-->
-                    </div>
+                    
                 </form>
             </section>
         </div>

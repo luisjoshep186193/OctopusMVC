@@ -65,7 +65,7 @@ namespace Octopus
             services.AddRazorPages();
             services.AddHttpClient("MXTAE", c =>
             {
-                c.BaseAddress = new Uri("http://www.itmultiwebservice.net/wsdmm_p/fdmm.asmx?op=TAE");
+                c.BaseAddress = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmm.asmx?op=TAE");
                 // Github API versioning
                 c.DefaultRequestHeaders.Add("Accept", "application/soap+xml");
                 c.DefaultRequestHeaders
@@ -76,7 +76,7 @@ namespace Octopus
             });
             services.AddHttpClient("Evolution", c =>
             {
-                c.BaseAddress = new Uri("http://www.ventamovil.com.mx:9092/service.asmx/");
+                c.BaseAddress = new Uri("http://www.ventamovil.com.mx:9094/service.asmx/");
                 // Github API versioning
                 c.DefaultRequestHeaders.Add("Accept", "application/soap+xml");
                 c.DefaultRequestHeaders

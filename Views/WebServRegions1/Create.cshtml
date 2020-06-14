@@ -1,12 +1,11 @@
 ﻿@model Octopus.Models.WebServRegion
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Nuevo";
 }
 
-<h1>Create</h1>
 
-<h4>WebServRegion</h4>
+<h4>@ViewBag.Tittle</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -21,7 +20,7 @@
                 <div class="row">
 
                     <select asp-for="WebServiceId" class="form-control col-9" asp-items="ViewBag.WebServiceId"></select>
-                    <a class="btn btn-primary col-3" asp-controller="WebServices" asp-action="Index">Editar</a>
+                    <!--a class="btn btn-primary col-3" asp-controller="WebServices" asp-action="Index">Editar</a-->
                 </div>
             </div>
 

@@ -22,7 +22,7 @@ namespace Octopus.Controllers
         // GET: Montoes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Montos.Include(m => m.Carrier);
+            var applicationDbContext = _context.Montos.Include(m => m.Carrier).OrderBy(s=>s.CarrierId).ThenBy(s=>s.MontoCant);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -70,7 +70,7 @@ namespace Octopus.Controllers
         }
 
         // GET: Montoes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, bool partial)
         {
             if (id == null)
             {
@@ -83,6 +83,8 @@ namespace Octopus.Controllers
                 return NotFound();
             }
             ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking(), "Id", "CarrierName", monto.CarrierId);
+            if (partial)
+                return PartialView(monto);
             return View(monto);
         }
 
@@ -123,7 +125,7 @@ namespace Octopus.Controllers
         }
 
         // GET: Montoes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, bool partial)
         {
             if (id == null)
             {
@@ -137,7 +139,8 @@ namespace Octopus.Controllers
             {
                 return NotFound();
             }
-
+            if (partial)
+                return PartialView(monto);
             return View(monto);
         }
 

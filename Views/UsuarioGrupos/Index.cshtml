@@ -17,8 +17,10 @@
 <label class="text-danger">@message</label>
 @if (Model != null)
 {
-    <table class="table">
-        <thead>
+<div class="jumbotron">
+
+    <table class="table table-striped table responsive table-dark" style="margin-left:0px !important">
+        <thead class="thead-dark">
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.GrupoId)
@@ -44,7 +46,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Grupo.GroupName)
                     </td>
-                     <td>
+                    <td>
                         @Html.DisplayFor(modelItem => item.User.Nombre)
                     </td>
                     <td>
@@ -62,6 +64,6 @@
             }
         </tbody>
     </table>
-
-}
+    </div>
+    }
 

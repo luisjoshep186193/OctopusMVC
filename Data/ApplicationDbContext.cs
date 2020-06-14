@@ -51,7 +51,7 @@ namespace Octopus.Data
             modelBuilder.Entity<Lada>().Ignore(p => p.ladasInit);
             modelBuilder.Entity<User>().Ignore(p => p.Rol);
             modelBuilder.Entity<Recarga>().Ignore(p => p.Ok);
-
+            modelBuilder.Entity<Recarga>().Ignore(p => p.WSTempName); 
             base.OnModelCreating(modelBuilder);
         }
     }

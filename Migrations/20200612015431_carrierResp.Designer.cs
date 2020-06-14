@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Octopus.Data;
 
 namespace Octopus.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200612015431_carrierResp")]
+    partial class carrierResp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -335,26 +337,14 @@ namespace Octopus.Migrations
                     b.Property<int>("CarrierId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CarrierTempName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Intent")
-                        .HasColumnType("int");
 
                     b.Property<int>("MontoId")
                         .HasColumnType("int");
 
                     b.Property<double>("PhoneNumber")
                         .HasColumnType("float");
-
-                    b.Property<string>("RecargaReq")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResponseFromCarrier")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StatusCode")
                         .HasColumnType("nvarchar(max)");

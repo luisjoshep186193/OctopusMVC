@@ -2,6 +2,16 @@
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript">
+    $(document).ready(function () {
+
+        $('body').on('keyup', 'input.phoneNumber', function () {
+            if ($(this).val().length === this.size) {
+                var input = $('#confirmPhone');
+                input.focus();
+            }
+        });
+
+    });
     function deleteRol(val) {
 
             let timerInterval
