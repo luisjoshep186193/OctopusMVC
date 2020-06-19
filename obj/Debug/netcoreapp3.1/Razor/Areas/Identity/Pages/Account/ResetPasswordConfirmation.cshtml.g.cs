@@ -34,6 +34,34 @@ using Octopus.Areas.Identity.Pages;
 #line hidden
 #nullable disable
 #nullable restore
+#line 4 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using Octopus;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 5 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using Octopus.Models;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 6 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using Microsoft.AspNetCore.Authorization;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 7 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using System.Security.Claims;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
 #line 1 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/Account/_ViewImports.cshtml"
 using Octopus.Areas.Identity.Pages.Account;
 
@@ -41,7 +69,7 @@ using Octopus.Areas.Identity.Pages.Account;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"f0777872b9ce78f7b6d3c93e5abfb33c74fd771f", @"/Areas/Identity/Pages/Account/ResetPasswordConfirmation.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"407e0030273bcd7fcc1343ce8fb1de20987e5a30", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"9256fb9937225ae575f4f0633d31deb82ba3bd23", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"a8affcbaa8d7cbac1cb236234f6950b1ecc26541", @"/Areas/Identity/Pages/Account/_ViewImports.cshtml")]
     public class Areas_Identity_Pages_Account_ResetPasswordConfirmation : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
     {
@@ -87,7 +115,7 @@ Write(ViewData["Title"]);
 #line hidden
 #nullable disable
             WriteLiteral("</h1>\n<p>\n    Your password has been reset. Please ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f0777872b9ce78f7b6d3c93e5abfb33c74fd771f4678", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f0777872b9ce78f7b6d3c93e5abfb33c74fd771f5439", async() => {
                 WriteLiteral("click here to log in");
             }
             );
@@ -105,6 +133,10 @@ Write(ViewData["Title"]);
             WriteLiteral(".\n</p>\n");
         }
         #pragma warning restore 1998
+        [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
+        public UserManager<User> UserManager { get; private set; }
+        [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
+        public SignInManager<User> SignInManager { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

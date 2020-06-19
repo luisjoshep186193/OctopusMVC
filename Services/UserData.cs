@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Octopus.Data;
@@ -34,9 +35,9 @@ namespace Octopus.Services
             return _SignInManager.IsSignedIn(User) ? User.FindFirstValue(ClaimTypes.Name) : "";
         }
 
-        public string getCurrentUserId(SignInManager<User> attr)
+        public async Task<User> GetCurrentUserId(string userId)
         {
-            return _SignInManager.IsSignedIn(User) ? User.FindFirstValue(ClaimTypes.NameIdentifier) : "";
+            return await _context.User.FindAsync(userId);
         }
     }
 }

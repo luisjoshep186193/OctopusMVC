@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "YRfb6D7urdfboY5xjyQ04S4Cntn/md0BHtzvVBjP3y0kpeWhkZf1oqkW+SjT6vox4RYgR0KLnFPlRnN1ed5sPg==",
+  "dgSpecHash": "hE5YalifcdiAeijq1jN19/mfrLiN+9v63CgZ6oCA/f59ExUi6uJ0AbT2E5g9lGAsH6tRPjYUa7HqfolAAxEYjA==",
   "success": true,
   "projectFilePath": "/Users/flex/Documents/OctopusMVC-master/Octopus/Octopus.csproj",
   "expectedPackageFiles": [
     "/Users/flex/.nuget/packages/antlr/3.4.1.9004/antlr.3.4.1.9004.nupkg.sha512",
+    "/Users/flex/.nuget/packages/azure.core/1.2.2/azure.core.1.2.2.nupkg.sha512",
+    "/Users/flex/.nuget/packages/azure.storage.blobs/12.5.0-preview.1/azure.storage.blobs.12.5.0-preview.1.nupkg.sha512",
+    "/Users/flex/.nuget/packages/azure.storage.common/12.5.0-preview.1/azure.storage.common.12.5.0-preview.1.nupkg.sha512",
     "/Users/flex/.nuget/packages/jquery/1.8.0/jquery.1.8.0.nupkg.sha512",
     "/Users/flex/.nuget/packages/jquery.validation/1.8.0.1/jquery.validation.1.8.0.1.nupkg.sha512",
     "/Users/flex/.nuget/packages/karambolo.aspnetcore.bundling/3.1.0/karambolo.aspnetcore.bundling.3.1.0.nupkg.sha512",
@@ -159,6 +162,7 @@
     "/Users/flex/.nuget/packages/system.net.nameresolution/4.3.0/system.net.nameresolution.4.3.0.nupkg.sha512",
     "/Users/flex/.nuget/packages/system.net.primitives/4.3.0/system.net.primitives.4.3.0.nupkg.sha512",
     "/Users/flex/.nuget/packages/system.net.sockets/4.3.0/system.net.sockets.4.3.0.nupkg.sha512",
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/system.numerics.vectors/4.5.0/system.numerics.vectors.4.5.0.nupkg.sha512",
     "/Users/flex/.nuget/packages/system.objectmodel/4.3.0/system.objectmodel.4.3.0.nupkg.sha512",
     "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/system.private.datacontractserialization/4.3.0/system.private.datacontractserialization.4.3.0.nupkg.sha512",
     "/Users/flex/.nuget/packages/system.reflection/4.3.0/system.reflection.4.3.0.nupkg.sha512",
@@ -209,7 +213,8 @@
     "/Users/flex/.nuget/packages/system.xml.xdocument/4.3.0/system.xml.xdocument.4.3.0.nupkg.sha512",
     "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/system.xml.xmldocument/4.3.0/system.xml.xmldocument.4.3.0.nupkg.sha512",
     "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/system.xml.xmlserializer/4.3.0/system.xml.xmlserializer.4.3.0.nupkg.sha512",
-    "/Users/flex/.nuget/packages/webgrease/1.5.2/webgrease.1.5.2.nupkg.sha512"
+    "/Users/flex/.nuget/packages/webgrease/1.5.2/webgrease.1.5.2.nupkg.sha512",
+    "/Users/flex/.nuget/packages/windowsazure.storage/9.3.3/windowsazure.storage.9.3.3.nupkg.sha512"
   ],
   "logs": [
     {

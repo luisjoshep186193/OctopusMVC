@@ -25,12 +25,18 @@
                     <partial name="_LoginPartial" />
 
                     <input hidden id="dateInit" type="datetime-local" min="@DateTime.Now.AddDays(-1).ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.AddDays(-1).ToString("s")" class="form-control" />
-                    <input hidden id="dateEnd" type="datetime-local" max="@DateTime.Now.ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.ToString("s")" class="form-control" />
+                    <input hidden id="dateEnd" type="datetime-local" max="@DateTime.Now.ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.AddDays(1).ToString("s")" class="form-control" />
                     <ul class="navbar-nav flex-grow-1" style="color:white">
                         @if (SignInManager.IsSignedIn(User))
                         {
                             @if (User.IsInRole("Administrador"))
                             {
+                                if (User.IsInRole("Superadmin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                                    </li>
+                                }
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="WebServRegions1" asp-action="Index">WS Config</a>
                                 </li>
@@ -40,11 +46,17 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="UsuarioGrupos" asp-action="Index">Grupos</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Productos" asp-action="Index">Productos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Images" asp-action="Index">Images</a>
+                                </li>
                             }
 
                             <!--li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Ladas" asp-action="Index">Ladas</a>
-            </!--li-->
+            <a class="nav-link text-dark" asp-area="" asp-controller="Ladas" asp-action="Index">Ladas</a>
+        </!--li-->
 
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
@@ -63,18 +75,18 @@
         </nav>
         @if (SignInManager.IsSignedIn(User))
         {
-            <nav class="navbar navbar-light bg-white box-shadow">
+            <nav class="navbar navbar-light box-shadow" style="background-color:inherit">
                 <a id="errorLbl" class="text-danger col-12"></a>
-                <div class="main form-inline col-12">
+                <div class="main form-inline col-12" style="margin-top:10px;margin-bottom:10px;background-color:purple;border-radius:20px">
 
-                    <div id="walletDetail" class="container col-sm-12 col-md-6" style="background-color:azure">
+                    <div id="walletDetail" class="container col-sm-12 col-md-6" style="color:white;height:100%">
                         <h6 class="text-center">Mi Cartera</h6>
 
                         @{
                             await Html.RenderPartialAsync("/Views/Carteras/Details.cshtml", cartera);
                         }
                     </div>
-                    <div id="lastMovements" class="container col-sm-12 col-md-6" style="background-color:azure">
+                    <div id="lastMovements" class="container col-sm-12 col-md-6" style="color:white;height:100%">
                         <h6 class="text-center">Últimos movimientos</h6>
                         @{
                             await Html.RenderPartialAsync("/Views/CarteraTransactions/Index.cshtml", context.CarteraTransactions.Where(s => s.CarteraId == cartera.Id).OrderByDescending(s => s.Id).Take(3).ToList());
@@ -86,7 +98,7 @@
         }
     </header>
     <div class="main">
-        <button class="btn btn-primary" onclick="showMessage()">Show IP</button>
+        <!--button class="btn btn-primary" onclick="showMessage()">Show IP</button-->
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -105,7 +117,7 @@
                 </div>
                 <div class="modal-footer">
                   
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -154,13 +166,31 @@
             var id = val.id;
             var name = val.name;
             var value = val.value;
-            var showHide = id == "getConsulta" ? false : true;
 
-            switch (id) {
+            var showHide = true;
+            var typePage = "Action";
+
+            var redirectEdit = id == "RedirectEdit" ? false : true;
+            if (name == "getConsulta" || name == "getReporteAll") {
+                showHide = name == "getConsulta" ?false:true;
+            }
+            else {
+                typePage = document.getElementById("pageType").name;
+            }
+            //alert("vas a redirigir?" + redirectEdit);
+            var jsUrl = '@Url.Action("action", "controller")';
+            document.getElementById('modalTitle').innerHTML = name;
+            switch (name) {
+                case 'Create':
+                    var getUrl = jsUrl.replace('action', name).replace('controller', typePage);
+                    showDetailsModal("GET", getUrl, {}, true, redirectEdit);
+                    break;
+                case 'Edit':
+                    var getUrl = jsUrl.replace('action', name).replace('controller', typePage);
+                    showDetailsModal("GET", getUrl, { id: id, partial: true }, true);
+                    break;
                 case 'getConsulta':
                 case 'getReporteAll':
-
-                    document.getElementById('modalTitle').innerHTML = name;
                     Swal.fire({
                         title: 'Buscar regargas',
                         text: "Elige fecha inicial y final",
@@ -191,48 +221,15 @@
 
                             showDetailsModal("GET", "@Url.Action("Index", "Recargas")", { id: "", partial: true, datInit: dataInit, datEnd: dataEnd }, showHide);
                         }//end if(result.value)
-
-
                     })
-
-
                     break;
-                case 'backRecargaList':
-                    showDetailsModal("GET", "@Url.Action("Index", "Recargas")", { id: "", partial: true }, false);
+                case 'Index':
+                    var getUrl = jsUrl.replace('action', name).replace('controller', typePage);
+                    showDetailsModal("GET", getUrl, { id: "", partial: true }, true);
                     break;
-                case "getRecargaDetail":
-                    //alert(`transacción exitosa ` + name);
-                    showDetailsModal("GET", "@Url.Action("Details", "Recargas")", { id: name, partial: true}, false);
-                    break;
-                case "detailsUser":
-                   // alert("function detailsUser"+name);
-
-                    showDetailsModal("GET", "@Url.Action("Edit", "Users")", { id: name, partial: true}, true);
-                    break;
-                case "editMonto":
-                   // alert("function detailsUser"+name);
-
-                    showDetailsModal("GET", "@Url.Action("Edit", "Montoes")", { id: name, partial: true}, true);
-                    break;
-                case "deleteMonto":
-                   // alert("function detailsUser"+name);
-
-                    showDetailsModal("GET", "@Url.Action("Delete", "Montoes")", { id: name, partial: true}, true);
-                    break;
-                 case "editWS":
-                   // alert("function detailsUser"+name);
-
-                    showDetailsModal("GET", "@Url.Action("Edit", "WebServRegions1")", { id: name, partial: true}, true);
-                    break;
-                case "deleteWS":
-                   // alert("function detailsUser"+name);
-
-                    showDetailsModal("GET", "@Url.Action("Delete", "WebServRegions1")", { id: name, partial: true}, true);
-                    break;
-                case "createWS":
-                   // alert("function detailsUser"+name);
-
-                    showDetailsModal("GET", "@Url.Action("Create", "WebServRegions1")", { }, true);
+                case 'Delete':
+                    var getUrl = jsUrl.replace('action', name).replace('controller', typePage);
+                    showDetailsModal("GET", getUrl, { id: id, partial: true }, true);
                     break;
                 case "deleteRol":
                     Swal.fire({
@@ -250,25 +247,28 @@
                     break;
             }
 
+
         }
-        function showDetailsModal(type,url,data,hideModal) {
-           // alert("showDetailsModal: " );
+        function showDetailsModal(type, url, data, hideModal, redirect = true, processData = true, contentType = true) {
+       
                     $.ajax({
                         type: type, // "POST",
                         url: url,// "ARROBAUrl.Action("Edit", "Users")",
 
-                        data: data//{id:val,partial:true},
+                        data: data,//{id:val,partial:true},
 
+                        processData: processData,
+                        contentType: contentType,
                         }).done(function (result) {
                             //alert("response showdetailsmodal: ");
                             document.getElementById('modalBody').innerHTML = result;
-                            if (hideModal) {
+                            if (hideModal && redirect) {
                                 document.getElementById('showModal').click();
                             }
 
 
                         }).fail(function (xhr, status, error) {
-                            alert(`transacción erronea` + error);
+                           // alert(`transacción erronea` + error);
                         Swal.fire(
                         'Error en la transacción!',
                         'Intentalo de nuevo',

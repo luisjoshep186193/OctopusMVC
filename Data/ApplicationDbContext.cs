@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -34,6 +34,11 @@ namespace Octopus.Data
         public virtual DbSet<CarteraTransaction> CarteraTransactions { get; set; }
         public virtual DbSet<Rol> Rols { get; set; }
 
+        public virtual DbSet<Producto> Productos { get; set; }
+        public virtual DbSet<PType> PTypes { get; set; }
+        public virtual DbSet<Image> Images { get; set; }
+        public virtual DbSet<Folder> Folders { get; set; }
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -44,15 +49,18 @@ namespace Octopus.Data
             modelBuilder.Entity<WebService>().Ignore(p => p.WSDesc);
             modelBuilder.Entity<User>().Ignore(p => p.UserDesc);
             modelBuilder.Entity<Recarga>().Ignore(p => p.ConfirmPhone);
-           
+            modelBuilder.Entity<Producto>().Ignore(p => p.File);
             modelBuilder.Entity<User>().Ignore(p => p.ComisionTAE);
             modelBuilder.Entity<Monto>().Ignore(p => p.MontoDesc);
             modelBuilder.Entity<Recarga>().Ignore(p => p.MontoCant);
             modelBuilder.Entity<Lada>().Ignore(p => p.ladasInit);
             modelBuilder.Entity<User>().Ignore(p => p.Rol);
             modelBuilder.Entity<Recarga>().Ignore(p => p.Ok);
-            modelBuilder.Entity<Recarga>().Ignore(p => p.WSTempName); 
+            modelBuilder.Entity<Recarga>().Ignore(p => p.WSTempName);
+            modelBuilder.Entity<Image>().Ignore(p => p.File);
             base.OnModelCreating(modelBuilder);
         }
+
+        public DbSet<Octopus.Models.Image> Image { get; set; }
     }
 }

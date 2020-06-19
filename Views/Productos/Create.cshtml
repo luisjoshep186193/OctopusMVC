@@ -1,0 +1,37 @@
+@model Octopus.Models.Producto
+
+@{
+    ViewData["Title"] = "Crear";
+}
+
+<h4>Nuevo <a>Elemento</a></h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+     
+        <form asp-action="Create" id="AjaxForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input hidden asp-for="Stock" class="form-control" value="0" />
+            <input hidden asp-for="GrupoId" class="form-control" value="@ViewBag.userId" />
+            <div class="form-group">
+                <label asp-for="CarpetaId" class="control-label"></label>
+                <select asp-for="CarpetaId" class="form-control" asp-items="ViewBag.FolderId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PTypeId" class="control-label"></label>
+                <select asp-for="PTypeId" class="form-control" asp-items="ViewBag.PTypeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label"></label>
+                <input asp-for="ProductName" class="form-control" />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group">
+                <input onclick="validarData(name)" name="Productos" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

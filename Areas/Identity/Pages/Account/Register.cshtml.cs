@@ -53,7 +53,7 @@ namespace Octopus.Areas.Identity.Pages.Account
         {
             [Required]
             [DataType(DataType.Text)]
-            [StringLength(20, ErrorMessage = "El {0} debe contener minimo {2} y máximo {1} caracteres.", MinimumLength = 6)]
+            [StringLength(50, ErrorMessage = "El {0} debe contener minimo {2} y máximo {1} caracteres.", MinimumLength = 6)]
             [Display(Name = "Nombre")]
             public string Nombre { get; set; }
 

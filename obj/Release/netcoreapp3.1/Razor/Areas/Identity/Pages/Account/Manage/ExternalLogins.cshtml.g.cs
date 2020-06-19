@@ -34,6 +34,34 @@ using Octopus.Areas.Identity.Pages;
 #line hidden
 #nullable disable
 #nullable restore
+#line 4 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using Octopus;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 5 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using Octopus.Models;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 6 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using Microsoft.AspNetCore.Authorization;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 7 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using System.Security.Claims;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
 #line 1 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/Account/_ViewImports.cshtml"
 using Octopus.Areas.Identity.Pages.Account;
 
@@ -48,7 +76,7 @@ using Octopus.Areas.Identity.Pages.Account.Manage;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"433b1be084b02c67343241656a02a29998caf35c", @"/Areas/Identity/Pages/Account/Manage/ExternalLogins.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"407e0030273bcd7fcc1343ce8fb1de20987e5a30", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"9256fb9937225ae575f4f0633d31deb82ba3bd23", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"a8affcbaa8d7cbac1cb236234f6950b1ecc26541", @"/Areas/Identity/Pages/Account/_ViewImports.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"271e267513bd4ba36f8cf4e94ecdd44c00122116", @"/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml")]
     public class Areas_Identity_Pages_Account_Manage_ExternalLogins : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
@@ -100,7 +128,7 @@ using Octopus.Areas.Identity.Pages.Account.Manage;
 #line hidden
 #nullable disable
             WriteLiteral("\n");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("partial", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "433b1be084b02c67343241656a02a29998caf35c8114", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("partial", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "433b1be084b02c67343241656a02a29998caf35c8875", async() => {
             }
             );
             __Microsoft_AspNetCore_Mvc_TagHelpers_PartialTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.TagHelpers.PartialTagHelper>();
@@ -158,9 +186,9 @@ __Microsoft_AspNetCore_Mvc_TagHelpers_PartialTagHelper.For = ModelExpressionProv
 #line hidden
 #nullable disable
             WriteLiteral("                            ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "433b1be084b02c67343241656a02a29998caf35c11028", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "433b1be084b02c67343241656a02a29998caf35c11789", async() => {
                 WriteLiteral("\n                                <div>\n                                    ");
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "433b1be084b02c67343241656a02a29998caf35c11358", async() => {
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "433b1be084b02c67343241656a02a29998caf35c12119", async() => {
                 }
                 );
                 __Microsoft_AspNetCore_Mvc_TagHelpers_InputTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.TagHelpers.InputTagHelper>();
@@ -185,7 +213,7 @@ __Microsoft_AspNetCore_Mvc_TagHelpers_InputTagHelper.For = ModelExpressionProvid
                 Write(__tagHelperExecutionContext.Output);
                 __tagHelperExecutionContext = __tagHelperScopeManager.End();
                 WriteLiteral("\n                                    ");
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "433b1be084b02c67343241656a02a29998caf35c13307", async() => {
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "433b1be084b02c67343241656a02a29998caf35c14068", async() => {
                 }
                 );
                 __Microsoft_AspNetCore_Mvc_TagHelpers_InputTagHelper = CreateTagHelper<global::Microsoft.AspNetCore.Mvc.TagHelpers.InputTagHelper>();
@@ -288,7 +316,7 @@ WriteAttributeValue(" ", 1027, login.ProviderDisplayName, 1028, 26, false);
 #line hidden
 #nullable disable
             WriteLiteral("    <h4>Add another service to log in.</h4>\n    <hr />\n    ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "433b1be084b02c67343241656a02a29998caf35c19063", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "433b1be084b02c67343241656a02a29998caf35c19824", async() => {
                 WriteLiteral("\n        <div id=\"socialLoginList\">\n            <p>\n");
 #nullable restore
 #line 46 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/Account/Manage/ExternalLogins.cshtml"
@@ -368,6 +396,10 @@ WriteAttributeValue(" ", 1883, provider.DisplayName, 1884, 21, false);
 #nullable disable
         }
         #pragma warning restore 1998
+        [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
+        public UserManager<User> UserManager { get; private set; }
+        [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
+        public SignInManager<User> SignInManager { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

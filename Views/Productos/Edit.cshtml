@@ -1,0 +1,52 @@
+@model Octopus.Models.Producto
+
+@{
+    ViewData["Title"] = "Editar";
+}
+
+<h5>@ViewBag.TypeName</h5>
+<a>@Model.ProductName</a>
+<hr />
+<div class="row">
+    <a class="btn btn-block btn-lg mx-auto btn-success" name="Producto" id="@Model.Id" onclick="AddImage(this)">Agregar Imagen</a>
+    <div class="col-md-12">
+        <form class="col-md-12 row" asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input hidden asp-for="ProductName" class="form-control" />
+            <input hidden asp-for="DateCreated" class="form-control" />
+            <input hidden asp-for="PTypeId" class="form-control" />
+            <input hidden asp-for="GrupoId" class="form-control" />
+            <div class="form-group col-12">
+                <label asp-for="Description" class="control-label"></label>
+                <input type="text" asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group col-6">
+                <label asp-for="Stock" class="control-label"></label>
+                <input asp-for="Stock" class="form-control" />
+                <span asp-validation-for="Stock" class="text-danger"></span>
+            </div>
+            <div class="form-group col-6">
+                <label asp-for="Ventas" class="control-label"></label>
+                <input asp-for="Ventas" class="form-control" />
+                <span asp-validation-for="Ventas" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-6">
+                <label asp-for="Codigo" class="control-label"></label>
+                <input asp-for="Codigo" class="form-control" />
+                <span asp-validation-for="Codigo" class="text-danger"></span>
+            </div>
+            <div class="form-group col-6">
+                <label asp-for="Hastags" class="control-label"></label>
+                <input asp-for="Hastags" class="form-control" />
+                <span asp-validation-for="Hastags" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-12">
+                <input type="submit" value="Save" class="btn btn-primary btn-block col-8 mx-auto" />
+            </div>
+        </form>
+    </div>
+</div>

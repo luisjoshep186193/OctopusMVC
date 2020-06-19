@@ -34,6 +34,27 @@ using Octopus.Areas.Identity.Pages;
 #line hidden
 #nullable disable
 #nullable restore
+#line 4 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using Octopus;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 6 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using Microsoft.AspNetCore.Authorization;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 7 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/_ViewImports.cshtml"
+using System.Security.Claims;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
 #line 1 "/Users/flex/Documents/OctopusMVC-master/Octopus/Areas/Identity/Pages/Account/_ViewImports.cshtml"
 using Octopus.Areas.Identity.Pages.Account;
 
@@ -55,7 +76,7 @@ using Octopus.Models;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"37117082714cfc3dd5f4752ca92cc924eca7e76e", @"/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"407e0030273bcd7fcc1343ce8fb1de20987e5a30", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"9256fb9937225ae575f4f0633d31deb82ba3bd23", @"/Areas/Identity/Pages/_ViewImports.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"a8affcbaa8d7cbac1cb236234f6950b1ecc26541", @"/Areas/Identity/Pages/Account/_ViewImports.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"271e267513bd4ba36f8cf4e94ecdd44c00122116", @"/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml")]
     public class Areas_Identity_Pages_Account_Manage__ManageNav : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
@@ -105,7 +126,7 @@ using Octopus.Models;
 #line hidden
 #nullable disable
             WriteLiteral("<ul class=\"nav nav-pills flex-column\">\n    <li class=\"nav-item\">");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e8685", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e9261", async() => {
                 WriteLiteral("Mi Perfil");
             }
             );
@@ -132,7 +153,7 @@ AddHtmlAttributeValue(" ", 249, ManageNavPages.IndexNavClass(ViewContext), 250, 
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral("</li>\n    <li class=\"nav-item\">");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e10509", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e11085", async() => {
                 WriteLiteral("Email");
             }
             );
@@ -159,7 +180,7 @@ AddHtmlAttributeValue(" ", 388, ManageNavPages.EmailNavClass(ViewContext), 389, 
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral("</li>\n    <li class=\"nav-item\">");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e12330", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e12906", async() => {
                 WriteLiteral("Contraseña");
             }
             );
@@ -195,7 +216,7 @@ AddHtmlAttributeValue(" ", 521, ManageNavPages.ChangePasswordNavClass(ViewContex
 #line hidden
 #nullable disable
             WriteLiteral("        <li id=\"external-logins\" class=\"nav-item\">");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e14433", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e15009", async() => {
                 WriteLiteral("External logins");
             }
             );
@@ -230,7 +251,7 @@ AddHtmlAttributeValue(" ", 766, ManageNavPages.ExternalLoginsNavClass(ViewContex
 #line hidden
 #nullable disable
             WriteLiteral("    <li class=\"nav-item\">");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e16487", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e17063", async() => {
                 WriteLiteral("Two-factor authentication");
             }
             );
@@ -257,7 +278,7 @@ AddHtmlAttributeValue(" ", 922, ManageNavPages.TwoFactorAuthenticationNavClass(V
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral("</li>\n    <li class=\"nav-item\">");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e18347", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "37117082714cfc3dd5f4752ca92cc924eca7e76e18923", async() => {
                 WriteLiteral("Personal data");
             }
             );
@@ -288,6 +309,8 @@ AddHtmlAttributeValue(" ", 1116, ManageNavPages.PersonalDataNavClass(ViewContext
         #pragma warning restore 1998
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public SignInManager<User> SignInManager { get; private set; }
+        [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
+        public UserManager<User> UserManager { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

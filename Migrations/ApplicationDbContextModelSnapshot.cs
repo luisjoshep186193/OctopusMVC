@@ -161,6 +161,9 @@ namespace Octopus.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CarrierId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CarrierName")
                         .HasColumnType("nvarchar(max)");
 
@@ -244,6 +247,33 @@ namespace Octopus.Migrations
                     b.ToTable("CarteraTransactions");
                 });
 
+            modelBuilder.Entity("Octopus.Models.Folder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("FolderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GrupoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserOwner")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GrupoId");
+
+                    b.ToTable("Folders");
+                });
+
             modelBuilder.Entity("Octopus.Models.Grupo", b =>
                 {
                     b.Property<int>("Id")
@@ -262,6 +292,32 @@ namespace Octopus.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Grupos");
+                });
+
+            modelBuilder.Entity("Octopus.Models.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AssetId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("URL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PTypeId");
+
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("Octopus.Models.Lada", b =>
@@ -323,6 +379,70 @@ namespace Octopus.Migrations
                     b.HasIndex("CarrierId");
 
                     b.ToTable("Montos");
+                });
+
+            modelBuilder.Entity("Octopus.Models.PType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("TypeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PTypes");
+                });
+
+            modelBuilder.Entity("Octopus.Models.Producto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CarpetaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Codigo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GrupoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Hastags")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Stock")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Thumbnail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Ventas")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GrupoId");
+
+                    b.HasIndex("PTypeId");
+
+                    b.ToTable("Productos");
                 });
 
             modelBuilder.Entity("Octopus.Models.Recarga", b =>
@@ -685,6 +805,24 @@ namespace Octopus.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Octopus.Models.Folder", b =>
+                {
+                    b.HasOne("Octopus.Models.Grupo", "Grupo")
+                        .WithMany()
+                        .HasForeignKey("GrupoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Octopus.Models.Image", b =>
+                {
+                    b.HasOne("Octopus.Models.PType", "PType")
+                        .WithMany()
+                        .HasForeignKey("PTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Octopus.Models.Lada", b =>
                 {
                     b.HasOne("Octopus.Models.Region", "Region")
@@ -708,6 +846,21 @@ namespace Octopus.Migrations
                     b.HasOne("Octopus.Models.Carrier", "Carrier")
                         .WithMany()
                         .HasForeignKey("CarrierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Octopus.Models.Producto", b =>
+                {
+                    b.HasOne("Octopus.Models.Grupo", "Grupo")
+                        .WithMany()
+                        .HasForeignKey("GrupoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Octopus.Models.PType", "PType")
+                        .WithMany()
+                        .HasForeignKey("PTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

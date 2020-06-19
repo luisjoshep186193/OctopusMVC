@@ -1,0 +1,45 @@
+@model Octopus.Models.Image
+
+@{
+    ViewData["Title"] = "Crear";
+}
+
+<h4>Nueva Imagen</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        
+        <form method="post" enctype="multipart/form-data" asp-controller="Images" id="AjaxForm" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input hidden asp-for="AssetId" class="form-control" value="@ViewBag.elementId" />
+            <input hidden asp-for="PTypeId" class="form-control" value="@ViewBag.typeId" />
+            <div class="form-group">
+                <label asp-for="ImageName" class="control-label"></label>
+                <input asp-for="ImageName" class="form-control" />
+                <span asp-validation-for="ImageName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <p>Selecciona Imagen:</p>
+                    <input asp-for="File" type="file" name="File"  />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input onclick="validarImage(name)" name="Images" value="Create" class="btn btn-primary" />
+                    <!--input class="btn btn-primary btn-md btn-block" type="submit" value="Subir" /-->
+                </div>
+            </div>
+        </form>
+     
+     
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

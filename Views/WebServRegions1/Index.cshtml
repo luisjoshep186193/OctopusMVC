@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<Octopus.Models.WebServRegion>
 
 @{
-    ViewData["Title"] = "WebService";
+    ViewData["Title"] = "WebServices";
 }
 
-<h1>@ViewBag.Title</h1>
+<input hidden id="pageType" name="WebServRegions1" />
 
 <p>
-    <a class="btn btn-primary btn-lg mx auto" style="color:white" onclick="showModal(this)" id="createWS">Nuevo WebService</a>
+    <a class="btn btn-outline-primary" onclick="showModal(this)" id="" name="Create">Nuevo WebSvc</a>
 </p>
 <div class="jumbotron">
 
@@ -57,11 +57,11 @@
                     </td>
 
                     <td>
-                        <a class="btn btn-outline-warning" onclick="showModal(this)" id="editWS" name="@item.Id">Edit</a> |
-                        <a class="btn btn-outline-delete" onclick="showModal(this)" id="deleteWS" name="@item.Id">Delete</a>
+                        <a class="btn btn-outline-warning" onclick="showModal(this)" id="@item.Id" name="Edit">Edit</a> |
+                        <a class="btn btn-outline-delete" onclick="showModal(this)" id="@item.Id" name="Delete">Delete</a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-    </div>
+</div>

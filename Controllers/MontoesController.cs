@@ -49,7 +49,7 @@ namespace Octopus.Controllers
         public IActionResult Create()
         {
             ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking(), "Id", "CarrierName");
-            return View();
+            return PartialView();
         }
 
         // POST: Montoes/Create
@@ -66,7 +66,7 @@ namespace Octopus.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking(), "Id", "CarrierName", monto.CarrierId);
-            return View(monto);
+            return PartialView(monto);
         }
 
         // GET: Montoes/Edit/5
@@ -85,7 +85,7 @@ namespace Octopus.Controllers
             ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking(), "Id", "CarrierName", monto.CarrierId);
             if (partial)
                 return PartialView(monto);
-            return View(monto);
+            return PartialView(monto);
         }
 
         // POST: Montoes/Edit/5
@@ -121,7 +121,7 @@ namespace Octopus.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking(), "Id", "CarrierName", monto.CarrierId);
-            return View(monto);
+            return PartialView(monto);
         }
 
         // GET: Montoes/Delete/5

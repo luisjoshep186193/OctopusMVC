@@ -5,7 +5,7 @@
 
 }
 
-
+    <input hidden id="pageType" name="Users" />
 <!--a id="errorLbl" class="text-danger col-12"></!--a-->
 <div class="main col-lg-12 form-inline">
  
@@ -155,8 +155,8 @@
                     }
                 <td>
                     <!--a class="btn btn-block btn-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a-->
-                    <a class="btn btn-md btn-block btn-success col-8 mx-auto" onclick="showModal(this)" id="detailsUser" name="@item.Id">Editar</a>
-                    
+                    <a class="btn btn-md btn-block btn-success col-8 mx-auto" onclick="showModal(this)" id="@item.Id" name="Edit">Editar</a>
+
                     <!--a asp-action="Delete" class="btn btn-block btn-danger" asp-route-id="@item.Id">Global</!--a-->
                     <!--a class="btn btn-outline-success btn-block" asp-controller="Wallets" asp-action="CrearUnWallet">Wallet</a-->
                 </td>

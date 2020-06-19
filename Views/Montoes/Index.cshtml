@@ -5,9 +5,9 @@
 }
 
 <h3>@ViewBag.Title</h3>
-
+<input hidden id="pageType" name="Montoes" />
 <p>
-    <a class="btn btn-primary btn-block mx-auto" asp-action="Create">Agregar Monto</a>
+    <a class="btn btn-primary btn-block mx-auto" id="" name="Create" onclick="showModal(this)">Agregar Monto</a>
 </p>
 <div class="jumbotron">
 
@@ -35,8 +35,8 @@
                         $@Html.DisplayFor(modelItem => item.MontoCant).00
                     </td>
                     <td>
-                        <a class="btn btn-outline-warning" onclick="showModal(this)" id="editMonto" name="@item.Id">Editar</a> |
-                        <a class="btn btn-outline-danger" onclick="showModal(this)" id="deleteMonto" name="@item.Id">Eliminar</a>
+                        <a class="btn btn-outline-warning" onclick="showModal(this)" name="Edit" id="@item.Id" >Editar</a> |
+                        <a class="btn btn-outline-danger" onclick="showModal(this)" id="@item.Id" name="Delete">Eliminar</a>
                     </td>
                 </tr>
             }

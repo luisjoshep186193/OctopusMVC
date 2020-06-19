@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Octopus.Models;
+using System.Security.Claims;
+using Octopus.Data;
 
 namespace Octopus.Areas.Identity.Pages.Account
 {
@@ -21,14 +23,17 @@ namespace Octopus.Areas.Identity.Pages.Account
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ApplicationDbContext _context;
 
         public LoginModel(SignInManager<User> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
         }
 
         [BindProperty]
@@ -43,14 +48,14 @@ namespace Octopus.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = "Este campo es Requerido")]
             [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "El número debe contener 10 dígitos")]
-            [MaxLength(10,ErrorMessage = "Debes ingresar un Número de 10 dígitos")]
-            [DataType(DataType.PhoneNumber)]
+            [MaxLength(10, ErrorMessage = "Debes ingresar un Número de 10 dígitos")]
+            [DataType(DataType.Text)]
             [Display(Name = "Teléfono")]
             public string PhoneNumber { get; set; }
-
-            [Required]
+            
+            //[Required(ErrorMessage = "Este campo es Requerido")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
@@ -77,6 +82,22 @@ namespace Octopus.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            if (_signInManager.IsSignedIn(User)) 
+            {
+                if (User.IsInRole("Superadmin")&& User.IsInRole("Administrador"))
+                {
+                    var impersonateUser = _context.User.FirstOrDefault(s => s.PhoneNumber == Input.PhoneNumber);
+                    if (impersonateUser != null && Input.Password.Equals("self"))
+                    {
+                        await _signInManager.SignInAsync(impersonateUser, isPersistent: false);
+                        return RedirectToAction("Index","Home");
+                    }
+                    else {
+                        return Page();
+                    }
+                    
+                }
+            }
             returnUrl = returnUrl ?? Url.Content("~/");
 
             if (ModelState.IsValid)

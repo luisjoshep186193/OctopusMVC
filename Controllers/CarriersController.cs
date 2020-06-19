@@ -56,7 +56,7 @@ namespace Octopus.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CarrierName")] Carrier carrier)
+        public async Task<IActionResult> Create([Bind("Id,CarrierName,CarrierId")] Carrier carrier)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace Octopus.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CarrierName")] Carrier carrier)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CarrierName,CarrierId")] Carrier carrier)
         {
             if (id != carrier.Id)
             {

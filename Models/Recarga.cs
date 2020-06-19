@@ -13,14 +13,13 @@ namespace Octopus.Models
         public int Id { get; set; }
         [DisplayName("Monto")]
         public int MontoId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Este campo es Requerido")]
         [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "El número debe contener 10 dígitos")]
-        
         [Display(Name = "Teléfono")]
         public double PhoneNumber { get; set; }
-
+        [Required(ErrorMessage = "Este campo es Requerido")]
         [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "El número debe contener 10 dígitos")]
-        
+
         [Display(Name = "Confirmar Teléfono")]
         [Compare("PhoneNumber", ErrorMessage = "Los números no coinciden.")]
         public double ConfirmPhone { get; set; }

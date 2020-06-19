@@ -1,10 +1,23 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/css/main.css
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/css/site.css
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/favicon.ico
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/acceso luis user.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/codigo login adapter.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/codigo registro activity.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/creacion de nueva bd.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/files
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/milky-way-1023340_1280.jpg
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/pantalla register.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/password not match.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/registro xml.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/registros insertados en bd.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/files/toast login user + apellido paterno.png
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/att.png
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/back.png
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/imgbck.jpg
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/movi.jpg
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/moviliario.jpg
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/octopuslogo.png
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/office.jpg
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/recarga.jpg
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/salapers.jpg
@@ -44,6 +57,7 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/lib/jquery/dist/jquery.min.js
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/lib/jquery/dist/jquery.min.map
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/lib/jquery/LICENSE.txt
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/web.config
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/appsettings.Development.json
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/appsettings.json
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/mono_crash.91852a957.0.json
@@ -51,6 +65,9 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Octopus.runtimeconfig.json
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Octopus.pdb
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Antlr3.Runtime.dll
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Azure.Core.dll
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Azure.Storage.Blobs.dll
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Azure.Storage.Common.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Karambolo.AspNetCore.Bundling.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Karambolo.AspNetCore.Bundling.NUglify.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/System.Web.Optimization.dll
@@ -126,6 +143,7 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/System.Security.Cryptography.ProtectedData.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/System.Text.Json.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/WebGrease.dll
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/Microsoft.WindowsAzure.Storage.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/cs/Microsoft.CodeAnalysis.resources.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/de/Microsoft.CodeAnalysis.resources.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/es/Microsoft.CodeAnalysis.resources.dll
