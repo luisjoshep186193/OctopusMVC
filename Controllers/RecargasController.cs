@@ -18,6 +18,7 @@ using System.Xml.Linq;
 using System.Xml;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
+using Octopus.Helpers;
 
 namespace Octopus.Controllers
 {
@@ -52,8 +53,8 @@ namespace Octopus.Controllers
             "'Price':'50','Number':'5555555555','Folio_POS':'1000803112700'}";
         private readonly string evolutionHeader = "Request_Transaction?jrquest={'User':'7972661217','Password':'Lunes1$','Carrier':'";
         private readonly string evolutionFooter = "','Folio_POS':'1000803112700'}";
-
-
+        private PaginadorGenerico<Recarga> _PaginadorRecargas;
+        private readonly int _RegistrosPorPagina = 20;
         Uri uri = new Uri("http://www.itmultiwebservice.net/wsdmm_p/fdmm.asmx?op=TAE");
 
 
@@ -95,9 +96,14 @@ namespace Octopus.Controllers
             return "";
         }
         // GET: Recargas
-        public async Task<IActionResult> Index(string id = "", bool partial = false, string datInit="", string datEnd="")
+        public async Task<IActionResult> Index(string id = "", bool partial = false, string datInit="", string datEnd="", int pagina = 1)
         {
-           Console.WriteLine(await getProductosTAE(getProducts));
+            int _TotalRegistros = 0;
+            ViewBag.id = id;
+            ViewBag.partial = partial;
+            ViewBag.datInit = datInit;
+            ViewBag.datEnd = datEnd;
+            //Console.WriteLine(await getProductosTAE(getProducts));
             if (_SignInManager.IsSignedIn(User))
             {
                 var userId = _SignInManager.IsSignedIn(User) ? User.FindFirstValue(ClaimTypes.NameIdentifier) : "";
@@ -105,16 +111,33 @@ namespace Octopus.Controllers
                 DateTime dateEnd = datEnd == null || datEnd == ""?  DateTime.Now: DateTime.Parse(datEnd);
                
                 if (id == null)
-                { 
+                {
+                    _TotalRegistros = _context.Recargas
+                       .Where(s => s.UserId == userId && s.DateCreated > dateInit && s.DateCreated < dateEnd).Count();
+                    // Número total de páginas de la tabla Customers
+                    var _TotalPaginas = (int)Math.Ceiling((double)_TotalRegistros / _RegistrosPorPagina);
+
+
                     var listaRecargas = await _context.Recargas
                         .Where(s => s.UserId == userId && s.DateCreated > dateInit && s.DateCreated < dateEnd)
                         .Include(r => r.Carrier).Include(r => r.Monto)
-                        .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking().OrderByDescending(s => s.Id).ToListAsync();
+                        .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking().Skip((pagina - 1) * _RegistrosPorPagina)
+                                                 .Take(_RegistrosPorPagina).OrderByDescending(s => s.Id).ToListAsync();
                     var carteraUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.Id == userId);
                     ViewBag.cartera = carteraUser.Cartera;
+
+                    _PaginadorRecargas = new PaginadorGenerico<Recarga>()
+                    {
+                        RegistrosPorPagina = _RegistrosPorPagina,
+                        TotalRegistros = _TotalRegistros,
+                        TotalPaginas = _TotalPaginas,
+                        PaginaActual = pagina,
+                        Resultado = listaRecargas
+                    };
+
                     if (partial)
-                        return PartialView(listaRecargas);
-                    return View(listaRecargas);
+                        return PartialView(_PaginadorRecargas);
+                    return View(_PaginadorRecargas);
                 }
                 else {
                    
@@ -176,18 +199,26 @@ namespace Octopus.Controllers
         // GET: Recargas/Create
         public async Task<IActionResult> Create()
         {
+            ViewBag.masterU = false;
             ViewBag.bolerr= false;
             if (_SignInManager.IsSignedIn(User))
             {
                 var currentUser = await getCurrentUser();
                 var carriers = _context.Carriers.AsNoTracking();
                 if (await _UserManager.IsInRoleAsync(currentUser, "Administrador"))
-                    ViewData["CarrierId"] = new SelectList(carriers, "Id", "CarrierName");
+                {
+                    if (currentUser.PhoneNumber != "5534040120")
+                        ViewData["CarrierId"] =  new SelectList(carriers, "Id", "CarrierName");
+                    else
+                        ViewBag.masterU = true;
+                }
                 else
-                ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking().Where(s => s.CarrierName != "Octopus"), "Id", "CarrierName");
+                    ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking().Where(s => s.CarrierName != "Octopus"), "Id", "CarrierName");
 
-                ViewData["MontoId"] = new SelectList(_context.Montos.Where(s => s.CarrierId == carriers.First().Id).Include(s => s.Carrier).AsNoTracking().OrderBy(s=>s.MontoCant), "Id", "MontoCant");
-                ViewData["WebServDescId"] = new SelectList(_context.WebServDescs.AsNoTracking(), "Id", "WebServiceName");
+                if (currentUser.PhoneNumber != "5534040120") 
+                    ViewData["MontoId"] = new SelectList(_context.Montos.Where(s => s.CarrierId == carriers.First().Id).Include(s => s.Carrier).AsNoTracking().OrderBy(s => s.MontoCant), "Id", "MontoCant");
+                    //ViewData["WebServDescId"] = new SelectList(_context.WebServDescs.AsNoTracking(), "Id", "WebServiceName");
+                
                 return View();
             }
             else {
@@ -202,13 +233,13 @@ namespace Octopus.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,MontoId,PhoneNumber,CarrierId,ConfirmPhone,MontoCant")] Recarga recarga)
         {//,DateCreated,DateResolved,StatusCode,WebServDescId,IdentityUserId
-
+            ViewBag.masterU = false;
             bool isAnErr = true; 
             //return View();
             var userId = _SignInManager.IsSignedIn(User) ? User.FindFirstValue(ClaimTypes.NameIdentifier) : "";
             var currentUser = await getCurrentUser();
-            var masterUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.UserName == "5534040120@octopus.com" && s.CreatedBy == "self")
-                ;
+            
+           
             if (ModelState.IsValid)
             {
               
@@ -277,7 +308,9 @@ namespace Octopus.Controllers
 
                         }
                     else if (currentUser.Cartera.SaldoTAE >= montoRecarga)//----option to perform a TAE recarga
-                    {
+                    {//trayendo la cartera del usuario master para regresarle su saldo y comisión
+                        var masterUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.UserName == "5534040120@octopus.com" && s.CreatedBy == "self");
+                            double comisionPadre = 0;
                         userData = new UserData();
                         var ladaSubstr = recarga.PhoneNumber.ToString().Substring(0, 1);
                         var lada = new Lada();
@@ -331,16 +364,25 @@ namespace Octopus.Controllers
                                             if (currentUser.Cartera.SaldoNormal > montoRecarga)
                                             {//crea la comisión completa de la recarga si el usuario tiene suficiente saldo normal
                                             tempSaldo =  montoRecarga;
-                                            }
+                                            comisionPadre = (Double.Parse(currentUser.Cartera.ComisionTAE.ToString()) / 100) * tempSaldo;
+                                        }
                                             else if (currentUser.Cartera.SaldoNormal > 0)
                                             {//crea comisión de lo que tenga de saldo si no alcanza el monto de la recarga
                                             tempSaldo =  currentUser.Cartera.SaldoNormal;
-                                            }
+                                            comisionPadre = (Double.Parse(currentUser.Cartera.ComisionTAE.ToString()) / 100) * tempSaldo;
+                                        }
                                             else
                                             {//no genera comisión si ya no tiene saldo normal
                                             tempSaldo = 0;
                                             }
-                                        masterUser.Cartera.SaldoNormal += montoRecarga;
+                                        //Actualizando saldos master
+                                        masterUser.Cartera.SaldoNormal += tempSaldo;
+                                        masterUser.Cartera.SaldoTAE += montoRecarga;
+                                        _context.Entry(masterUser.Cartera).State = EntityState.Modified;
+                                        await _context.SaveChangesAsync();
+
+
+
                                         recarga.StatusId = 1;
                                         recarga.StatusCode = "0";
                                         recarga.DateCreated = DateTime.Now;
@@ -349,10 +391,10 @@ namespace Octopus.Controllers
                                             currentUser.Cartera.SaldoNormal -= montoRecarga;
                                             currentUser.Cartera.SaldoNormal = currentUser.Cartera.SaldoNormal <= 0 ? 0 : currentUser.Cartera.SaldoNormal;
                                             currentUser.Cartera.Venta += montoRecarga;
-                                        
                                             currentUser.Cartera.SaldoTAE -= montoRecarga;
+                                       
 
-                                            _context.Entry(currentUser.Cartera).State = EntityState.Modified;
+                                        _context.Entry(currentUser.Cartera).State = EntityState.Modified;
                                             CarteraTransaction carteraTransaction =
                                                 new CarteraTransaction()
                                                 {
@@ -360,8 +402,6 @@ namespace Octopus.Controllers
                                                     OperacionDesc = "R Pend " + service.CarrierName + " $ " + montoRecarga + " - " + recarga.PhoneNumber,
                                                     FechaOperation = DateTime.Now,
                                                     Monto = montoRecarga,
-
-
                                                 };
                                             _context.CarteraTransactions.Add(carteraTransaction); 
                                             var carteraTransactionId = await _context.SaveChangesAsync();
@@ -458,7 +498,13 @@ namespace Octopus.Controllers
                                         }
                                         //regresar saldo si no se realizo la recarga solo si se modifico la wallet e inserto registro de la misma
                                         if (carteraTransactionId == 2) {
-                                           
+                                            //actualizando saldos master
+                                            //Actualizando saldos master
+                                            masterUser.Cartera.SaldoNormal -= tempSaldo;
+                                            masterUser.Cartera.SaldoTAE -= montoRecarga;
+                                            _context.Entry(masterUser.Cartera).State = EntityState.Modified;
+                                            await _context.SaveChangesAsync();
+
                                             currentUser.Cartera.SaldoNormal += tempSaldo;
                                             currentUser.Cartera.Venta -= montoRecarga;
                                             currentUser.Cartera.SaldoTAE += montoRecarga;
@@ -515,12 +561,17 @@ namespace Octopus.Controllers
            
             var carriers = _context.Carriers.AsNoTracking();
             if (await _UserManager.IsInRoleAsync(currentUser, "Administrador"))
-                ViewData["CarrierId"] = new SelectList(carriers, "Id", "CarrierName", recarga.CarrierId);
+            {
+                if (currentUser.PhoneNumber != "5534040120")
+                    ViewData["CarrierId"] = new SelectList(carriers, "Id", "CarrierName", recarga.CarrierId);
+                else
+                ViewBag.masterU = false;
+            }
             else
                 ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking().Where(s => s.CarrierName != "Octopus"), "Id", "CarrierName", recarga.CarrierId);
-
-            ViewData["MontoId"] = new SelectList(_context.Montos.Include(s => s.Carrier).AsNoTracking().OrderBy(s => s.MontoCant), "Id", "MontoCant", recarga.MontoId);
-            ViewData["WebServDescId"] = new SelectList(_context.WebServDescs.AsNoTracking(), "Id", "WebServiceName", recarga.WebServDescId);
+            if (currentUser.PhoneNumber != "5534040120")
+                ViewData["MontoId"] = new SelectList(_context.Montos.Include(s => s.Carrier).AsNoTracking().OrderBy(s => s.MontoCant), "Id", "MontoCant", recarga.MontoId);
+           // ViewData["WebServDescId"] = new SelectList(_context.WebServDescs.AsNoTracking(), "Id", "WebServiceName", recarga.WebServDescId);
             ViewBag.error = ViewBag.error ?? "Posiblemente tus Datos Ingresados son Inválidos";
             ViewBag.bolerr = isAnErr;
             return View(recarga);

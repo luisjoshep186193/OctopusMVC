@@ -10,9 +10,29 @@
                 input.focus();
             }
         });
-        
+
     });
-  
+
+    function getPage(val) {
+        var name = val.name;
+        var value = val.value;
+        var id = val.id;
+        //var currentPage = document.getElementById("currentPage").value;
+
+        var dataInit = "";
+        var dataEnd = "";
+        if (name == "Recargas") {
+            dataInit = document.getElementById("dateInit").value;
+            dataEnd = document.getElementById("dateEnd").value;
+        }
+        //alert("Page: " + dataInit +" - "+ dataEnd)
+        var jsUrl = '@Url.Action("Index", "controller")';
+        var getUrl = jsUrl.replace('controller', name);
+       
+        showDetailsModal("GET", getUrl, { id: "", partial: true, datInit: dataInit, datEnd: dataEnd, pagina: value }, false);
+        //showDetailsModal("GET", getUrl, { id: "", partial: true }, true);
+    }
+
     function AddImage(val) {
 
     }

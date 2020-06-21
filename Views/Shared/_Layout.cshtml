@@ -23,7 +23,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
-
+                    <input hidden id="currentPage" type="number" value=1 class="form-control" />
                     <input hidden id="dateInit" type="datetime-local" min="@DateTime.Now.AddDays(-1).ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.AddDays(-1).ToString("s")" class="form-control" />
                     <input hidden id="dateEnd" type="datetime-local" max="@DateTime.Now.ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.AddDays(1).ToString("s")" class="form-control" />
                     <ul class="navbar-nav flex-grow-1" style="color:white">
@@ -55,8 +55,8 @@
                             }
 
                             <!--li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Ladas" asp-action="Index">Ladas</a>
-        </!--li-->
+                <a class="nav-link text-dark" asp-area="" asp-controller="Ladas" asp-action="Index">Ladas</a>
+            </!--li-->
 
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
