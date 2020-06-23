@@ -168,16 +168,16 @@
             var value = val.value;
 
             var showHide = true;
-            var typePage = "Action";
+            var typePage = value;
 
             var redirectEdit = id == "RedirectEdit" ? false : true;
             if (name == "getConsulta" || name == "getReporteAll") {
                 showHide = name == "getConsulta" ?false:true;
             }
             else {
-                typePage = document.getElementById("pageType").name;
+                typePage = value == null ? document.getElementById("pageType").name:value;
             }
-            //alert("vas a redirigir?" + redirectEdit);
+            //alert("vas a redirigir?" + redirectEdit+id);
             var jsUrl = '@Url.Action("action", "controller")';
             document.getElementById('modalTitle').innerHTML = name;
             switch (name) {
@@ -187,7 +187,11 @@
                     break;
                 case 'Edit':
                     var getUrl = jsUrl.replace('action', name).replace('controller', typePage);
-                    showDetailsModal("GET", getUrl, { id: id, partial: true }, true);
+                    showDetailsModal("GET", getUrl, { id: id, partial: true }, true, true);
+                    break;
+                case 'Details':
+                    var getUrl = jsUrl.replace('action', name).replace('controller', typePage);
+                    showDetailsModal("GET", getUrl, { id: id, partial: true }, true, true);
                     break;
                 case 'getConsulta':
                 case 'getReporteAll':

@@ -20,6 +20,9 @@
                 <section>
                     <form asp-action="Create" id="createForm">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <a class="btn btn-success" asp-controller="Home" asp-action="Index">Recargas</a>
+                        <button type="button" class="btn btn-primary" onclick="getServices()">Servicios</button>
+                        <input hidden id="pagoType" value="recarga" />
                         <input id="MontoCant" asp-for="MontoCant" type="hidden" />
                         <div class="form-group">
                             <label asp-for="CarrierId" class="control-label"></label>
@@ -33,19 +36,32 @@
                             <label class="control-label">Cantidad a Enviar</label>
                             <input id="insertMonto" asp-for="MontoId" class="form-control" type="number" />
                         </div>
-                        <div class="form-group">
-                            <label asp-for="PhoneNumber" class="control-label"></label>
-                            <input id="phoneNumber" type="number" size="10" asp-for="PhoneNumber" class="form-control phoneNumber" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        <div id="phoneDiv">
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber" class="control-label"></label>
+                                <input id="phoneNumber" type="number" size="10" asp-for="PhoneNumber" class="form-control phoneNumber" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ConfirmPhone" class="control-label"></label>
+                                <input type="number" id="confirmPhone" asp-for="ConfirmPhone" size="10" class="form-control" />
+                                <span asp-validation-for="ConfirmPhone" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div hidden id="servicesDiv">
+                            <div class="form-group">
+                                <label asp-for="ServReference" class="control-label"></label>
+                                <input id="serviceRef" type="text" size="10" asp-for="ServReference" class="form-control" />
+                                <span asp-validation-for="ServReference" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ServReferenceConf" class="control-label"></label>
+                                <input type="text" id="confirmRef" asp-for="ServReferenceConf" size="10" class="form-control" />
+                                <span asp-validation-for="ServReferenceConf" class="text-danger"></span>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label asp-for="ConfirmPhone" class="control-label"></label>
-                            <input type="number" id="confirmPhone" asp-for="ConfirmPhone" size="10" class="form-control" />
-                            <span asp-validation-for="ConfirmPhone" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <input type="submit" onclick="validateData();" value="Create" class="btn btn-primary" />
+                            <input type="submit" onclick="validateData();" value="Enviar" class="btn btn-primary" />
                         </div>
                     </form>
                 </section>
@@ -78,37 +94,39 @@ Swal.fire({
                 footer: '  <h5 class="error" style="color:red">Error: @errorMsg</h5>'
             })</script>
     }
-    <script type="text/javascript">
+<script type="text/javascript">
 
     function validateData() {
         event.preventDefault();
 
         var carrier = document.getElementById("selectCarrier");
         var dspText = carrier.options[carrier.selectedIndex].text;
-
+        var typeTransaction = document.getElementById("pagoType").value;
         var montoARecargar = 0;
+        var referencia = "";
 
-        if (dspText === "Octopus") {
+        if (dspText === "Octopus" || typeTransaction == "servicio") {
             montoARecargar = $('#insertMonto').val();
+            referencia = document.getElementById("serviceRef").value;
         } else {
-
+            referencia = document.getElementById("phoneNumber").value;
             var e = document.getElementById("selectMonto");
             montoARecargar = e.options[e.selectedIndex].text;
         }
 
-        var phoneNumber = document.getElementById("phoneNumber").value;
+         
 
         var montoCant = document.getElementById("MontoCant");
         montoCant.value = montoARecargar;
 
         Swal.fire({
-            title: 'Seguro de realizar la recarga?',
-            text: montoARecargar +" - "+ phoneNumber,
+            title: 'Seguro de realizar la Transacción?',
+            text: dspText +" - "+montoARecargar + " - " + referencia,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Recargar'
+            confirmButtonText: 'Enviar'
         }).then((result) => {
 
             if (result.value) {
@@ -124,19 +142,63 @@ Swal.fire({
             }
         })
     }
-    $("#selectCarrier").change(function () {
-        var value = $('#selectCarrier').val();
-        var e = document.getElementById("selectCarrier");
-        var dspText = e.options[e.selectedIndex].text;
+
+    function getServices() {
+        document.getElementById("pagoType").value = "servicio";
         Swal.fire({
             position: 'center',
             icon: 'info',
-            title: 'Loading ' + dspText + ' options',
+            title: 'Cargando Servicios',
+            showConfirmButton: false,
+
+        })
+        
+        document.getElementById("insertMontoDiv").hidden = false;
+        document.getElementById("insertMontoDiv").style.visibility = '';
+        document.getElementById("selectMontoDiv").hidden = true;
+        document.getElementById("selectMontoDiv").style.visibility = 'hidden';
+
+        //mostrando div de pago de servicios
+
+        document.getElementById("servicesDiv").hidden = false;
+        document.getElementById("servicesDiv").style.visibility = '';
+        document.getElementById("phoneDiv").hidden = true;
+        document.getElementById("phoneDiv").style.visibility = 'hidden';
+
+              $.getJSON("@Url.Action("GetServices", "Recargas")")
+                .done(function (data) {
+                var subItems = "";
+                console.log("data"+JSON.stringify(data));
+                $.each(data, function (index, item) {
+                console.log("index: " + JSON.stringify(index) + " item: " + JSON.stringify(item));
+                console.log("index: " + index + " item: " + item);
+                subItems += "<option value='" + item.text + "'>" + item.value + "</option>";
+                });
+
+
+                console.log("subitems: "+JSON.stringify(subItems));
+                $("#selectCarrier").html(subItems);
+                Swal.close();
+                // alert("Data Loaded: " + data);
+                //$("#selectMonto").asp-items =
+                });
+        }
+
+        $("#selectCarrier").change(function () {
+        var value = $('#selectCarrier').val();
+        var e = document.getElementById("selectCarrier");
+            var dspText = e.options[e.selectedIndex].text;
+            var pagoType = document.getElementById("pagoType").value;
+
+        Swal.fire({
+            position: 'center',
+            icon: 'info',
+            title: 'Cargando ' + dspText + ' montos',
             showConfirmButton: false,
 
         })
 
-        if (dspText === "Octopus") {
+            if (dspText === "Octopus" || pagoType == "servicio") {
             Swal.close();
             document.getElementById("insertMontoDiv").hidden = false;
             document.getElementById("insertMontoDiv").style.visibility = '';
@@ -169,5 +231,5 @@ Swal.fire({
                 }
 
                 });
-    </script>
+</script>
 }

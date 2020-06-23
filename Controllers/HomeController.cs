@@ -24,6 +24,9 @@ namespace Octopus.Controllers
         {
             //return RedirectToAction("CreateUserRegions", "UserRegions", new { userId = "0a5fd8f4-f2ef-418d-bf4f-cd1292aa2ed2" });
             if (_SignInManager.IsSignedIn(User)) {
+                if(User.IsInRole("Administrador"))
+                    return View();
+                else
                 return RedirectToAction("Create","Recargas");
             } else {
                 return View();

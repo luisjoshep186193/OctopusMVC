@@ -110,19 +110,34 @@ namespace Octopus.Controllers
                 DateTime dateInit = datInit == null || datInit == ""? DateTime.Now.AddDays(-1) :DateTime.Parse(datInit);
                 DateTime dateEnd = datEnd == null || datEnd == ""?  DateTime.Now: DateTime.Parse(datEnd);
                
-                if (id == null)
+                if (id == null || id == "")
                 {
-                    _TotalRegistros = _context.Recargas
-                       .Where(s => s.UserId == userId && s.DateCreated > dateInit && s.DateCreated < dateEnd).Count();
+                   
                     // Número total de páginas de la tabla Customers
-                    var _TotalPaginas = (int)Math.Ceiling((double)_TotalRegistros / _RegistrosPorPagina);
-
-
-                    var listaRecargas = await _context.Recargas
-                        .Where(s => s.UserId == userId && s.DateCreated > dateInit && s.DateCreated < dateEnd)
+                   
+                    var listaRecargas =new List<Recarga>();
+                    if (User.IsInRole("Administrador"))
+                    {
+                        _TotalRegistros = _context.Recargas
+                      .Where(s =>s.DateCreated > dateInit && s.DateCreated < dateEnd).Count();
+                        listaRecargas =
+                        await _context.Recargas
+                        .Where(s =>s.DateCreated > dateInit && s.DateCreated < dateEnd)
                         .Include(r => r.Carrier).Include(r => r.Monto)
                         .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking().Skip((pagina - 1) * _RegistrosPorPagina)
-                                                 .Take(_RegistrosPorPagina).OrderByDescending(s => s.Id).ToListAsync();
+                                                 .Take(_RegistrosPorPagina).OrderBy(s => s.Id).ToListAsync();
+                    }
+                    else {
+                        _TotalRegistros = _context.Recargas
+                      .Where(s => s.UserId == userId && s.DateCreated > dateInit && s.DateCreated < dateEnd).Count();
+                        listaRecargas =
+                       await _context.Recargas
+                       .Where(s => s.UserId == userId && s.DateCreated > dateInit && s.DateCreated < dateEnd)
+                       .Include(r => r.Carrier).Include(r => r.Monto)
+                       .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking().Skip((pagina - 1) * _RegistrosPorPagina)
+                                                .Take(_RegistrosPorPagina).OrderBy(s => s.Id).ToListAsync();
+                    }
+                    var _TotalPaginas = (int)Math.Ceiling((double)_TotalRegistros / _RegistrosPorPagina);
                     var carteraUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.Id == userId);
                     ViewBag.cartera = carteraUser.Cartera;
 
@@ -157,7 +172,24 @@ namespace Octopus.Controllers
             }
           
         }
+        [HttpGet]
+        public async Task<IEnumerable<SelectListItem>> GetServices()
+        {
+            var services = await _context.Carriers.AsNoTracking().Where(s => s.CarrierName != "Octopus" && s.CarrierType == "Service").ToListAsync();
+   
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (var service in services)
+            {
+                items.Add(new SelectListItem() { Text = service.Id.ToString(), Value = service.CarrierName });
+            }
 
+
+            // you may replace the above code with data reading from database based on the id
+
+            return new SelectList(items, "Value", "Text");
+            //return await _context.Montos.ToListAsync());
+        }
+        
         [HttpGet]
         public async Task<IEnumerable<SelectListItem>> GetMontos(string name) {
             var montos = await _context.Montos.Where(s=>s.CarrierId == Int32.Parse(name)).Include(s=>s.Carrier).OrderBy(s => s.MontoCant).ToListAsync();
@@ -213,7 +245,7 @@ namespace Octopus.Controllers
                         ViewBag.masterU = true;
                 }
                 else
-                    ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking().Where(s => s.CarrierName != "Octopus"), "Id", "CarrierName");
+                    ViewData["CarrierId"] = new SelectList(_context.Carriers.AsNoTracking().Where(s => s.CarrierName != "Octopus" && s.CarrierType != "Service"), "Id", "CarrierName");
 
                 if (currentUser.PhoneNumber != "5534040120") 
                     ViewData["MontoId"] = new SelectList(_context.Montos.Where(s => s.CarrierId == carriers.First().Id).Include(s => s.Carrier).AsNoTracking().OrderBy(s => s.MontoCant), "Id", "MontoCant");
@@ -231,41 +263,170 @@ namespace Octopus.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MontoId,PhoneNumber,CarrierId,ConfirmPhone,MontoCant")] Recarga recarga)
+        public async Task<IActionResult> Create([Bind("Id,MontoId,PhoneNumber,CarrierId,ConfirmPhone,MontoCant,ServReference,ServReferenceConf")] Recarga recarga)
         {//,DateCreated,DateResolved,StatusCode,WebServDescId,IdentityUserId
             ViewBag.masterU = false;
             bool isAnErr = true; 
             //return View();
             var userId = _SignInManager.IsSignedIn(User) ? User.FindFirstValue(ClaimTypes.NameIdentifier) : "";
             var currentUser = await getCurrentUser();
-            
-           
-            if (ModelState.IsValid)
+            bool IsValid = false;
+            bool canPerformRec = false;
+            Recarga recargaResponse = new Recarga();
+            var error = "";
+            CarteraTransaction carteraTransaction =
+                                           new CarteraTransaction();
+            double tempSaldo = 0;
+
+            if (recarga.ServReference != null)
+            {
+                if (recarga.ServReference == recarga.ServReferenceConf)
+                {
+                    IsValid = true;
+                }
+
+            }
+            else if (recarga.PhoneNumber != 0) {
+                if (recarga.PhoneNumber == recarga.ConfirmPhone)
+                {
+                    IsValid = true;
+                }
+            }
+
+            if (ModelState.IsValid || IsValid)
             {
               
-                if (userId != "")
-                {//validando que el usuario este logueado y trayendo la cartera del mismo
-                    //var currentUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.Id == userId);
+                if (userId != "" )
+                {
                     //validando el saldo del usuario
                     var montoRecarga = Double.Parse(recarga.MontoCant);
                     var service = await _context.Carriers.FindAsync(recarga.CarrierId);
-                    if (service != null) {
-                    if (service.CarrierName.Equals("Octopus") && montoRecarga > 0) {//option to perform a product transaction
+
+                    if (service != null) {//validando carrier
+                        //trayendo la cartera del usuario master para regresarle su saldo y comisión
+                        var masterUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.UserName == "5534040120@octopus.com" && s.CreatedBy == "self");
+                        double montoServicio = montoRecarga + currentUser.Cartera.CuotaServicios;
+                        var carteraTransactionId = 0;
+                        var recargaId = 0;
+                        if (IsValid && service.CarrierType == "Service" && montoServicio < currentUser.Cartera.SaldoNormal) {//cobro de servicio
+                            recarga.Intent = -1;
+
+                            masterUser.Cartera.SaldoNormal += montoServicio;
+                            double servicioComision = montoServicio + (Double.Parse(currentUser.Cartera.ComisionTAE.ToString())/ 100) * montoServicio;
+                            masterUser.Cartera.SaldoTAE += servicioComision;
+                            _context.Entry(masterUser.Cartera).State = EntityState.Modified;
+                            await _context.SaveChangesAsync();
+                            
+                            recarga.StatusId = 1;
+                            recarga.StatusCode = "0";
+                            recarga.DateCreated = DateTime.Now;
+                            recarga.UserId = userId;
+                            var WS = await _context.WebServDescs.Where(s => s.WebServiceName == "VENTA MÓVIL").FirstOrDefaultAsync();
+                            recarga.WebServDescId = WS.Id;
+
+                            currentUser.Cartera.SaldoNormal -= montoServicio;
+                            currentUser.Cartera.Venta += montoServicio;
+                            currentUser.Cartera.SaldoTAE -= servicioComision;
+                            _context.Entry(currentUser.Cartera).State = EntityState.Modified;
+                            carteraTransaction =
+                                           new CarteraTransaction()
+                                           {
+                                               CarteraId = currentUser.Cartera.Id,
+                                               OperacionDesc = "Op Pend " + service.CarrierName + " $ " + montoServicio + " - " + recarga.ServReference,
+                                               FechaOperation = DateTime.Now,
+                                               Monto = montoServicio,
+                                           };
+                            _context.CarteraTransactions.Add(carteraTransaction);
+                             carteraTransactionId = await _context.SaveChangesAsync();
+
+                            _context.Add(recarga);
+                             recargaId = await _context.SaveChangesAsync();
+
+                            //realizar la recarga si se inserto nuevo registro de recarga y desconto en wallet
+                            canPerformRec = carteraTransactionId == 2 && recargaId == 1;
+                            if (canPerformRec)
+                            {
+                                recarga.CarrierId = service.CarrierId;
+                               recargaResponse = await sendRecargaEvolution(recarga);//recargaResponse = null; to test carrier error
+                                recarga.CarrierId = service.Id;
+                                
+                                if (recargaResponse != null)
+                                {
+                                    if (recargaResponse.ResponseFromCarrier.Contains("Error"))
+                                    {
+                                        error = "Carr";
+                                        ViewBag.error = recargaResponse.ResponseFromCarrier;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine(recargaResponse.ToString());
+
+                                        recarga.StatusId = recargaResponse.StatusId;
+                                        recarga.StatusCode = recargaResponse.StatusCode;
+                                        carteraTransaction.CarrierResponse = recargaResponse.ResponseFromCarrier;
+                                        carteraTransaction.OperacionDesc = "Operación Exitosa " + service.CarrierName + " de " + montoRecarga + " - " + recarga.ServReference;
+                                        _context.Entry(recarga).State = EntityState.Modified;
+                                        _context.Entry(carteraTransaction).State = EntityState.Modified;
+
+                                        var transactionsUpdate = await _context.SaveChangesAsync();
+                                        return RedirectToAction("Index", "Home");
+                                    }
+                                }
+                                else
+                                {
+                                    error = "Carr";
+                                    ViewBag.error = "Error al realizar operación por parte del carrier";
+                                }
+                            }
+                            //Retornando saldos
+                            if (carteraTransactionId == 2)
+                            {
+
+                             
+
+                                //actualizando saldos master
+                                //Actualizando saldos master
+                                masterUser.Cartera.SaldoNormal -= montoServicio;
+                                masterUser.Cartera.SaldoTAE -= servicioComision;
+                                _context.Entry(masterUser.Cartera).State = EntityState.Modified;
+                                await _context.SaveChangesAsync();
+
+                                currentUser.Cartera.SaldoNormal += montoServicio;
+                                currentUser.Cartera.Venta -= montoServicio;
+                                currentUser.Cartera.SaldoTAE += servicioComision;
+                                _context.Entry(currentUser.Cartera).State = EntityState.Modified;
+                                await _context.SaveChangesAsync();
+                                carteraTransaction.CarrierResponse = recarga.ResponseFromCarrier;
+                                carteraTransaction.OperacionDesc =
+                                    "Error " + error + " - " + service.CarrierName + " $" + recarga.MontoCant + "#" + recarga.ServReference;
+                                _context.Entry(carteraTransaction).State = EntityState.Modified;
+                                await _context.SaveChangesAsync();
+
+                            }
+                            if (recargaId == 1)
+                            {
+                                _context.Recargas.Remove(recarga);
+
+                                await _context.SaveChangesAsync();
+                            }
+
+                        }
+                        else if (service.CarrierName.Equals("Octopus") && montoRecarga > 0) {//servicio de transpaso de saldo, solo positivo
                             var userUpdate = await _context.User.Include(s => s.Cartera).AsNoTracking()
                               .Where(s => s.PhoneNumber == recarga.PhoneNumber.ToString()).FirstOrDefaultAsync();
-                            var carteraTransaction = new CarteraTransaction { CarteraId = userUpdate.Cartera.Id, Monto = montoRecarga, OperacionDesc = "Traspaso-Saldo" };
+                             carteraTransaction = new CarteraTransaction { CarteraId = userUpdate.Cartera.Id, Monto = montoRecarga, OperacionDesc = "Traspaso-Saldo" };
                             carteraTransaction.Monto = System.Math.Abs(carteraTransaction.Monto);
-                            var userCartera = await getCurrentUser();
+                         //var userCartera = await getCurrentUser();
                             var carteraUpdate = await _context.Carteras.FirstOrDefaultAsync(s => s.Id == carteraTransaction.CarteraId);
                             //comisión de la cartera del hijo en base al saldo
                             double comisionHijo = (Double.Parse(carteraUpdate.ComisionTAE.ToString()) / 100) * carteraTransaction.Monto;
-                            double comisionPadre = (Double.Parse(userCartera.Cartera.ComisionTAE.ToString()) / 100) * carteraTransaction.Monto;
+                            double comisionPadre = (Double.Parse(currentUser.Cartera.ComisionTAE.ToString()) / 100) * carteraTransaction.Monto;
                             //Monto mas comisión de la cartera del hijo
 
                             var saldoComisionH = carteraTransaction.Monto + comisionHijo;
                             var saldoComisionP = carteraTransaction.Monto + comisionPadre;
 
-                            if (userCartera.Cartera.SaldoNormal >= carteraTransaction.Monto)
+                            if (currentUser.Cartera.SaldoNormal >= carteraTransaction.Monto)
                             {
                                 //actualizando cartera de hijo
                                 carteraUpdate.SaldoNormal += carteraTransaction.Monto;
@@ -276,13 +437,13 @@ namespace Octopus.Controllers
 
 
                                 //actualizando cartera de padre
-                                userCartera.Cartera.SaldoNormal -= carteraTransaction.Monto;
-                                userCartera.Cartera.SaldoTAE -= saldoComisionH;
+                                currentUser.Cartera.SaldoNormal -= carteraTransaction.Monto;
+                                currentUser.Cartera.SaldoTAE -= saldoComisionH;
                                 //userCartera.Cartera.SaldoTAE -= carteraTransaction.Monto;
 
 
-                                userCartera.Cartera.Enviado += carteraTransaction.Monto;
-                                _context.Entry(userCartera.Cartera).State = EntityState.Modified;
+                                currentUser.Cartera.Enviado += carteraTransaction.Monto;
+                                _context.Entry(currentUser.Cartera).State = EntityState.Modified;
                                 await _context.SaveChangesAsync();
                                 //Agregando transaccion a la cartera
                                 _context.CarteraTransactions.Add(
@@ -294,7 +455,7 @@ namespace Octopus.Controllers
                                                Monto = montoRecarga
 
                                            });
-                                carteraTransaction.OperacionDesc += " de "+currentUser.PhoneNumber+" por ";
+                                carteraTransaction.OperacionDesc += " de " + currentUser.PhoneNumber + " por ";
                                 carteraTransaction.FechaOperation = DateTime.Now;
                                 _context.CarteraTransactions.Add(carteraTransaction);
                                 await _context.SaveChangesAsync();
@@ -307,51 +468,51 @@ namespace Octopus.Controllers
                             }
 
                         }
-                    else if (currentUser.Cartera.SaldoTAE >= montoRecarga)//----option to perform a TAE recarga
-                    {//trayendo la cartera del usuario master para regresarle su saldo y comisión
-                        var masterUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.UserName == "5534040120@octopus.com" && s.CreatedBy == "self");
+                        else if (currentUser.Cartera.SaldoTAE >= montoRecarga && service.CarrierType == "Recarga")//----option to perform a TAE recarga
+                        {
+                           
                             double comisionPadre = 0;
-                        userData = new UserData();
-                        var ladaSubstr = recarga.PhoneNumber.ToString().Substring(0, 1);
-                        var lada = new Lada();
-                        if (ladaSubstr == "4" || ladaSubstr == "7" || ladaSubstr == "8" || ladaSubstr == "9")
-                        {
-                            lada = getLada(7, recarga.PhoneNumber.ToString());
-                        }
-                        else
-                        {
-                            lada = getLada(3, recarga.PhoneNumber.ToString());
-                        }
+                            userData = new UserData();
+                            var ladaSubstr = recarga.PhoneNumber.ToString().Substring(0, 1);
+                            var lada = new Lada();
+                            if (ladaSubstr == "4" || ladaSubstr == "7" || ladaSubstr == "8" || ladaSubstr == "9")
+                            {
+                                lada = getLada(7, recarga.PhoneNumber.ToString());
+                            }
+                            else
+                            {
+                                lada = getLada(3, recarga.PhoneNumber.ToString());
+                            }
 
 
 
 
-                        if (lada != null)
-                        {//obteniendo la lada correspondiente del numero a recargar
+                            if (lada != null)
+                            {//obteniendo la lada correspondiente del numero a recargar
 
-                            var userAccessRegion = await _context.UsuarioRegions
-                                .Where(s => s.RegionId == lada.RegionId && s.UserId == userId
-                                ).AsNoTracking().FirstOrDefaultAsync();
-                            if (userAccessRegion != null)
-                            {//trayendo la lista de web servers para la region que pertenece la lada
-                                var webServReg = await _context.WebServRegions
-                                    .Where(s => s.RegionId == userAccessRegion.RegionId && s.WebService.Status == true)
-                                    .Include(s => s.WebService).ThenInclude(s => s.WebServDesc)
-                                    .OrderBy(s => s.WebService.Order).AsNoTracking().ToListAsync();
-                                if (webServReg.Count() > 0)
-                                {//----lista de webservers asignados a la region 
-                                    var webServUrl = webServReg[0].WebService.WebServDesc.URL;
-                                    var name = webServReg[0].WebService.WebServDesc.WebServiceName;
+                                var userAccessRegion = await _context.UsuarioRegions
+                                    .Where(s => s.RegionId == lada.RegionId && s.UserId == userId
+                                    ).AsNoTracking().FirstOrDefaultAsync();
+                                if (userAccessRegion != null)
+                                {//trayendo la lista de web servers para la region que pertenece la lada
+                                    var webServReg = await _context.WebServRegions
+                                        .Where(s => s.RegionId == userAccessRegion.RegionId && s.WebService.Status == true)
+                                        .Include(s => s.WebService).ThenInclude(s => s.WebServDesc)
+                                        .OrderBy(s => s.WebService.Order).AsNoTracking().ToListAsync();
+                                    if (webServReg.Count() > 0)
+                                    {//----lista de webservers asignados a la region 
+                                        var webServUrl = webServReg[0].WebService.WebServDesc.URL;
+                                        var name = webServReg[0].WebService.WebServDesc.WebServiceName;
                                         //choose the webserver to send
-                                    Console.WriteLine("Sending recarga to: " + webServUrl);
-                                        var error = "";
-                                        Recarga recargaResponse = new Recarga();
+                                        Console.WriteLine("Sending recarga to: " + webServUrl);
+                                       
+                                      
                                         recarga.CarrierTempName = service.CarrierName;
                                         if (webServReg.Count() > 1)
                                         {
                                             var desc = webServReg[0].WebService.WebServDesc.WebServiceName;
                                             recarga.WSTempName = desc;
-                                            recarga.WSTempName = desc == "MX TAE WebService" ? "Evolution": "TAE";
+                                            recarga.WSTempName = desc == "MX TAE WebService" ? "Evolution" : "TAE";
                                             recarga.Intent = 0;
                                         }
                                         else {
@@ -359,59 +520,57 @@ namespace Octopus.Controllers
                                         }
                                         //Validando User Credit before transaction
 
-                                        bool canPerformRec = false;
-                                        double tempSaldo = 0;
-                                            if (currentUser.Cartera.SaldoNormal > montoRecarga)
-                                            {//crea la comisión completa de la recarga si el usuario tiene suficiente saldo normal
-                                            tempSaldo =  montoRecarga;
+                                     
+                                        
+                                        if (currentUser.Cartera.SaldoNormal > montoRecarga)
+                                        {//crea la comisión completa de la recarga si el usuario tiene suficiente saldo normal
+                                            tempSaldo = montoRecarga;
                                             comisionPadre = (Double.Parse(currentUser.Cartera.ComisionTAE.ToString()) / 100) * tempSaldo;
                                         }
-                                            else if (currentUser.Cartera.SaldoNormal > 0)
-                                            {//crea comisión de lo que tenga de saldo si no alcanza el monto de la recarga
-                                            tempSaldo =  currentUser.Cartera.SaldoNormal;
+                                        else if (currentUser.Cartera.SaldoNormal > 0)
+                                        {//crea comisión de lo que tenga de saldo si no alcanza el monto de la recarga
+                                            tempSaldo = currentUser.Cartera.SaldoNormal;
                                             comisionPadre = (Double.Parse(currentUser.Cartera.ComisionTAE.ToString()) / 100) * tempSaldo;
                                         }
-                                            else
-                                            {//no genera comisión si ya no tiene saldo normal
+                                        else
+                                        {//no genera comisión si ya no tiene saldo normal
                                             tempSaldo = 0;
-                                            }
+                                        }
                                         //Actualizando saldos master
                                         masterUser.Cartera.SaldoNormal += tempSaldo;
                                         masterUser.Cartera.SaldoTAE += montoRecarga;
                                         _context.Entry(masterUser.Cartera).State = EntityState.Modified;
                                         await _context.SaveChangesAsync();
 
-
-
                                         recarga.StatusId = 1;
                                         recarga.StatusCode = "0";
                                         recarga.DateCreated = DateTime.Now;
-                                            recarga.UserId = userId;
-                                            recarga.WebServDescId = webServReg[0].WebService.WebServDescId;
-                                            currentUser.Cartera.SaldoNormal -= montoRecarga;
-                                            currentUser.Cartera.SaldoNormal = currentUser.Cartera.SaldoNormal <= 0 ? 0 : currentUser.Cartera.SaldoNormal;
-                                            currentUser.Cartera.Venta += montoRecarga;
-                                            currentUser.Cartera.SaldoTAE -= montoRecarga;
-                                       
+                                        recarga.UserId = userId;
+                                        recarga.WebServDescId = webServReg[0].WebService.WebServDescId;
+                                        currentUser.Cartera.SaldoNormal -= montoRecarga;
+                                        currentUser.Cartera.SaldoNormal = currentUser.Cartera.SaldoNormal <= 0 ? 0 : currentUser.Cartera.SaldoNormal;
+                                        currentUser.Cartera.Venta += montoRecarga;
+                                        currentUser.Cartera.SaldoTAE -= montoRecarga;
+
 
                                         _context.Entry(currentUser.Cartera).State = EntityState.Modified;
-                                            CarteraTransaction carteraTransaction =
-                                                new CarteraTransaction()
-                                                {
-                                                    CarteraId = currentUser.Cartera.Id,
-                                                    OperacionDesc = "R Pend " + service.CarrierName + " $ " + montoRecarga + " - " + recarga.PhoneNumber,
-                                                    FechaOperation = DateTime.Now,
-                                                    Monto = montoRecarga,
-                                                };
-                                            _context.CarteraTransactions.Add(carteraTransaction); 
-                                            var carteraTransactionId = await _context.SaveChangesAsync();
-                                            _context.Add(recarga);
-                                        var recargaId = await _context.SaveChangesAsync();
+                                        carteraTransaction =
+                                            new CarteraTransaction()
+                                            {
+                                                CarteraId = currentUser.Cartera.Id,
+                                                OperacionDesc = "R Pend " + service.CarrierName + " $ " + montoRecarga + " - " + recarga.PhoneNumber,
+                                                FechaOperation = DateTime.Now,
+                                                Monto = montoRecarga,
+                                            };
+                                        _context.CarteraTransactions.Add(carteraTransaction);
+                                         carteraTransactionId = await _context.SaveChangesAsync();
+                                        _context.Add(recarga);
+                                         recargaId = await _context.SaveChangesAsync();
 
                                         //realizar la recarga si se inserto nuevo registro de recarga y desconto en wallet
                                         canPerformRec = carteraTransactionId == 2 && recargaId == 1;
 
-                                       
+
                                         if (canPerformRec) {//trayendo las ultima recarga y actualizacion de wallet para el mismo numero
                                             DateTime dateDiff = DateTime.Now.AddSeconds(-10);
                                             var lastRec = await _context.Recargas.AsNoTracking().OrderByDescending(s => s.DateCreated)
@@ -419,8 +578,8 @@ namespace Octopus.Controllers
                                                 && s.Id != recarga.Id).FirstOrDefaultAsync();
 
                                             var lastCartTrans = await _context.CarteraTransactions.AsNoTracking().OrderByDescending(s => s.FechaOperation)
-                                                .Where(s =>s.OperacionDesc.Contains(recarga.PhoneNumber.ToString())
-                                                && s.CarteraId == currentUser.CarteraId && s.FechaOperation > dateDiff && s.Id !=carteraTransaction.Id)
+                                                .Where(s => s.OperacionDesc.Contains(recarga.PhoneNumber.ToString())
+                                                && s.CarteraId == currentUser.CarteraId && s.FechaOperation > dateDiff && s.Id != carteraTransaction.Id)
                                                 .FirstOrDefaultAsync();
                                             //validando que no se hayan hecho en el ultimo minuto
                                             //var dateToCompare = DateTime.Now.AddSeconds(-10);
@@ -435,21 +594,21 @@ namespace Octopus.Controllers
                                                 recarga.CarrierId = service.CarrierId;
                                                 switch (name)
                                                 {
-                                                    
+
                                                     case "MX TAE WebService":
-                                                        if(webServReg[0].RegionId == 9)
-                                                        headerTAE = headerTAE.Replace("USR", "bhernandez@gmail.com").Replace("PWD", "789456");
+                                                        if (webServReg[0].RegionId == 9)
+                                                            headerTAE = headerTAE.Replace("USR", "bhernandez@gmail.com").Replace("PWD", "789456");
                                                         else
-                                                        headerTAE = headerTAE.Replace("USR", "meximedia0@gmail.com").Replace("PWD", "789456");
+                                                            headerTAE = headerTAE.Replace("USR", "meximedia0@gmail.com").Replace("PWD", "789456");
 
                                                         recarga.CarrierTempName = service.CarrierName;
                                                         recargaResponse = await sendRecargaTAE(recarga);
-                                                        
+
                                                         break;
                                                     case "VENTA MÓVIL":
-                                                        
-                                                        if (webServReg[0].RegionId == 9)
-                                                        headerTAE = headerTAE.Replace("USR", "meximedia0@gmail.com").Replace("PWD", "789456");
+
+                                                       // if (webServReg[0].RegionId == 9)
+                                                            headerTAE = headerTAE.Replace("USR", "meximedia0@gmail.com").Replace("PWD", "789456");
                                                         recargaResponse = await sendRecargaEvolution(recarga);
 
                                                         break;
@@ -464,24 +623,25 @@ namespace Octopus.Controllers
                                                         error = "Carr";
                                                         ViewBag.error = recargaResponse.ResponseFromCarrier;
                                                     }
-                                                    else { 
-                                                    Console.WriteLine(recargaResponse.ToString());
+                                                    else {
+                                                        Console.WriteLine(recargaResponse.ToString());
 
-                                                    recarga.StatusId = recargaResponse.StatusId;
-                                                    recarga.StatusCode = recargaResponse.StatusCode;
-                                                    carteraTransaction.CarrierResponse = recargaResponse.ResponseFromCarrier;
-                                                    carteraTransaction.OperacionDesc = "Recarga Exitosa " + service.CarrierName + " de " + montoRecarga + " - " + recarga.PhoneNumber;
-                                                    _context.Entry(recarga).State = EntityState.Modified;
-                                                    _context.Entry(carteraTransaction).State = EntityState.Modified;
+                                                        recarga.StatusId = recargaResponse.StatusId;
+                                                        recarga.StatusCode = recargaResponse.StatusCode;
+                                                        carteraTransaction.CarrierResponse = recargaResponse.ResponseFromCarrier;
+                                                        carteraTransaction.OperacionDesc = "Recarga Exitosa " + service.CarrierName + " de " + montoRecarga + " - " + recarga.PhoneNumber;
+                                                        _context.Entry(recarga).State = EntityState.Modified;
+                                                        _context.Entry(carteraTransaction).State = EntityState.Modified;
 
-                                                    var transactionsUpdate = await _context.SaveChangesAsync();
-                                                    return RedirectToAction("Index", "Home");
-                                                }
+                                                        var transactionsUpdate = await _context.SaveChangesAsync();
+                                                        return RedirectToAction("Index", "Home");
+                                                    }
                                                 }
                                                 else {
                                                     error = "Carr";
                                                     ViewBag.error = "Error al realizar recarga por parte del carrier";
                                                 }
+
                                                 
                                             }//fin segunda validación de recarga doble en menos de un minuto
                                             else
@@ -489,15 +649,16 @@ namespace Octopus.Controllers
                                                 ViewBag.error = "Error al realizar recarga por intento doble";
                                                 error = "Dob ";
                                             }
-                                            
+
                                         }//fin de primera validación para crear recarga, realizar registros
                                         else
                                         {
                                             error = "Oct ";
                                             ViewBag.error = "Error al realizar recarga Octopus";
                                         }
-                                        //regresar saldo si no se realizo la recarga solo si se modifico la wallet e inserto registro de la misma
-                                        if (carteraTransactionId == 2) {
+                                        //retornando saldos
+                                        if (carteraTransactionId == 2)
+                                        {
                                             //actualizando saldos master
                                             //Actualizando saldos master
                                             masterUser.Cartera.SaldoNormal -= tempSaldo;
@@ -515,42 +676,46 @@ namespace Octopus.Controllers
                                                 "Error " + error + " - " + service.CarrierName + " $" + recarga.MontoCant + "#" + recarga.PhoneNumber;
                                             _context.Entry(carteraTransaction).State = EntityState.Modified;
                                             await _context.SaveChangesAsync();
-                                            
+
                                         }
-                                        if (recargaId == 1) {
+                                        if (recargaId == 1)
+                                        {
                                             _context.Recargas.Remove(recarga);
-                                          
+
                                             await _context.SaveChangesAsync();
                                         }
-                                        
                                     }
-                                else//no hay webservers asignados para la region
-                                {
-                                    ViewBag.error = "no hay webservers asignados para la region";
-                                }
+                                    else//no hay webservers asignados para la region
+                                    {
+                                        ViewBag.error = "no hay webservers asignados para la region";
+                                    }
 
+                                }
+                                else
+                                {
+                                    //No tiene acceso a esa region
+                                    ViewBag.error = "No tiene acceso a esa region";
+                                }
                             }
                             else
                             {
-                                //No tiene acceso a esa region
-                                ViewBag.error = "No tiene acceso a esa region";
+                                //el numero no pertenece a alguna lada
+                                ViewBag.error = "Numero erroneo";
                             }
                         }
-                        else
-                        {
-                            //el numero no pertenece a alguna lada
-                            ViewBag.error = "Numero erroneo";
+                        else {
+                            ViewBag.error = "No tienes suficiente saldo tae para realizar la operación";
                         }
-                    }
-                    else {
-                        ViewBag.error = "No tienes suficiente saldo tae para realizar la recarga";
-                    }
+                        //regresar saldo si no se realizo la recarga solo si se modifico la wallet e inserto registro de la misma
+                        
+
                     }//fin if, si no encuentra un servicio ligado o carrier
                     else
                     {
                        
                         ViewBag.error = "Carrier no válido";
                     }
+
                 }
                 else {
                     
@@ -699,10 +864,17 @@ namespace Octopus.Controllers
 
 
         private async Task<Recarga> sendRecargaEvolution(Recarga rec) {
-
+            var referencia = "";
+            if (rec.ServReference != null)
+            {
+                referencia = rec.ServReference;
+            }
+            else {
+                referencia = rec.PhoneNumber.ToString();
+            }
             var carrierId = rec.CarrierId < 10 ? "0" + rec.CarrierId : rec.CarrierId.ToString();
             var cuerpo = carrierId + "','Price':'" + rec.MontoCant + "','Number':'"
-                                                    + rec.PhoneNumber;
+                                                    + referencia;
             var req = evolutionHeader + cuerpo + evolutionFooter;
             rec.RecargaReq = req;
            // Recarga recarga = new Recarga();

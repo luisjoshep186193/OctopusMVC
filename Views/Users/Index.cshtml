@@ -2,7 +2,7 @@
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
 @{
-
+    var userId = ViewBag.userId;
 }
 
     <input hidden id="pageType" name="Users" />
@@ -34,18 +34,12 @@
                 <th>
                     Inicial
                 </th>
+
                 <th>
                     TAE
                 </th>
-                <th>
-                    Comisión
-                </th>
-                <th>
-                    Servicios
-                </th>
-                <th>
-                    Venta
-                </th>
+
+
                 <th>
                     Enviado
                 </th>
@@ -55,84 +49,83 @@
                 <th>
                     Saldo
                 </th>
-                <th>
-                    Transacciones
-                </th>
-
-                <th>
-                    Acciones
-                </th>
-            </tr>
+                
+                    <th>
+                        Transacciones
+                    </th>
+               
+                    <th>
+                        Acciones
+                    </th>
+                </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+            <tr>
 
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+
+
+                @if (item.Cartera != null)
+                {
                     <td>
-                        @Html.DisplayFor(modelItem => item.PhoneNumber)
+                        <a>@item.Cartera.Inicial</a>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Nombre)
+                        <input type="hidden" id="stae-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoTAE" value="@String.Format("{0:0.00}",@item.Cartera.SaldoTAE)" />
+                        <a id="atae-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.SaldoTAE)</a>
                     </td>
 
+                    <td>
+                        <a>@String.Format("{0:0.00}", @item.Cartera.Enviado)</a>
+                    </td>
 
-                    @if (item.Cartera != null)
+                    <td>
+                        <input type="hidden" id="sasig-@item.Cartera.Id" disabled step=".01" asp-for="@item.Cartera.Asignado" value="@String.Format("{0:0.00}",@item.Cartera.Asignado)" />
+                        <a id="aasig-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.Asignado)</a>
+                    </td>
+                    <td>
+                        <input type="hidden" id="sglob-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoNormal" value="@String.Format("{0:0.00}",@item.Cartera.SaldoNormal)" />
+                        <a id="aglob-@item.Cartera.Id">@item.Cartera.SaldoNormal</a>
+                    </td>
+                    @if (userId != item.Id)
                     {
-                        <td>
-                            <a>@item.Cartera.Inicial</a>
-                        </td>
-                        <td>
-                            <input type="hidden" id="stae-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoTAE" value="@String.Format("{0:0.00}",@item.Cartera.SaldoTAE)" />
-                            <a id="atae-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.SaldoTAE)</a>
-                        </td>
-                        <td>
-                            <a>@item.Cartera.ComisionTAE</a>
-                        </td>
-                        <td>
-                            <a>@item.Cartera.CuotaServicios</a>
-                        </td>
+            <td>
+                @if (User.FindFirstValue(ClaimTypes.NameIdentifier) != item.Id)
+                {
+                    <div class="row">
 
-                        <td>
-                            <a>@item.Cartera.Enviado</a>
-                        </td>
-                        <td>
-                            <a>@item.Cartera.Asignado</a>
+                        <input type="number" id="cant-@item.Cartera.Id" step=".01" value="0" />
 
-                        </td>
-                        <td>
-                            <input type="hidden" id="sasig-@item.Cartera.Id" disabled step=".01" asp-for="@item.Cartera.Asignado" value="@String.Format("{0:0.00}",@item.Cartera.Asignado)" />
-                            <a id="aasig-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.Asignado)</a>
-                        </td>
-                        <td>
-                            <input type="hidden" id="sglob-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoNormal" value="@String.Format("{0:0.00}",@item.Cartera.SaldoNormal)" />
-                            <a id="aglob-@item.Cartera.Id">@item.Cartera.SaldoNormal</a>
-                        </td>
-                        <td>
-                            <div class="row">
-                                @if (User.FindFirstValue(ClaimTypes.NameIdentifier) == item.Id)
-                                {
-                                    <input type="number" disabled id="cant-@item.Cartera.Id" step=".01" value="0" />
-                                }
-                                else
-                                {
+                    </div>
+                    <div class="row">
 
-                                    <input type="number" id="cant-@item.Cartera.Id" step=".01" value="0" />
-                                }
-
-                            </div>
-                            <div class="row">
-
-                                <input type="button" onclick="ajaxSaldoN(name)" id="btnGlobal-@item.Cartera.Id" name="@item.Cartera.Id"
-                                       value="Asignar" class="btn btn-primary" />
-                            </div>
-
-                        </td>
-
-
+                        <input type="button" onclick="ajaxSaldoN(name)" id="btnGlobal-@item.Cartera.Id" name="@item.Cartera.Id"
+                               value="Asignar" class="btn btn-primary" />
+                    </div>
+                }
+                else
+                {
+                    <button value="CarteraTransactions" class="btn btn-md btn-block btn-warning col-8 mx-auto" onclick="showModal(this)" id="@item.Id" name="Index">Detalles</button>
+                }
+            </td>
                     }
                     else
                     {
+                        <td></td>
+                            }
+
+
+
+                            }
+                            else
+                            {
                         <td>
                             0
                         </td>
@@ -152,15 +145,15 @@
                             @Html.ActionLink("Crear", "CrearUnWallet", "Carteras", new { userId = @item.Id }, new { @class = "btn btn-primary" })
                         </td>
 
-                    }
-                <td>
-                    <!--a class="btn btn-block btn-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a-->
-                    <a class="btn btn-md btn-block btn-success col-8 mx-auto" onclick="showModal(this)" id="@item.Id" name="Edit">Editar</a>
+                        }
+                        <td>
+                            <!--a class="btn btn-block btn-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a-->
+                            <a class="btn btn-md btn-block btn-success col-8 mx-auto" onclick="showModal(this)" id="@item.Id" name="Edit">Editar</a>
 
-                    <!--a asp-action="Delete" class="btn btn-block btn-danger" asp-route-id="@item.Id">Global</!--a-->
-                    <!--a class="btn btn-outline-success btn-block" asp-controller="Wallets" asp-action="CrearUnWallet">Wallet</a-->
-                </td>
-                </tr>
+                            <!--a asp-action="Delete" class="btn btn-block btn-danger" asp-route-id="@item.Id">Global</!--a-->
+                            <!--a class="btn btn-outline-success btn-block" asp-controller="Wallets" asp-action="CrearUnWallet">Wallet</a-->
+                        </td>
+                    </tr>
             }
         </tbody>
     </table>

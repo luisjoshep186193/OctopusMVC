@@ -34,9 +34,11 @@ namespace Octopus.Controllers
             if (_SignInManager.IsSignedIn(User)) {
                 if (id != "")
                 {
-                    var UserId =  User.FindFirstValue("Email");
-                    var cartera = await _context.Carteras.AsNoTracking().Where(s => s.Id == 1).FirstOrDefaultAsync();
-                    var applicationDbContext = _context.CarteraTransactions.Include(c => c.Cartera).Where(s => s.CarteraId == 1);
+                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var cartera = await _context.Carteras.AsNoTracking().Where(s => s.OwnerId == UserId).FirstOrDefaultAsync();
+                    var applicationDbContext = _context.CarteraTransactions.Include(c => c.Cartera).Where(s => s.CarteraId == cartera.Id);
+                    if(partial)
+                        return PartialView(await applicationDbContext.ToListAsync());
                     return View(await applicationDbContext.ToListAsync());
                 }
                 else

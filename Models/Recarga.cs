@@ -42,6 +42,13 @@ namespace Octopus.Models
         public string RecargaReq { get; set; }
         public string CarrierTempName { get; set; }
         public string WSTempName { get; set; }
+        [Required(ErrorMessage = "Este campo es Requerido")]
+        [DisplayName("Referencia")]
+        public string ServReference { get; set; }
+        [Required(ErrorMessage = "Este campo es Requerido")]
+        [DisplayName("Confirma Referencia")]
+        [Compare("ServReference", ErrorMessage = "Los números de referencia no coinciden.")]
+        public string ServReferenceConf { get; set; }
 
 
         public Monto Monto { get; set; }

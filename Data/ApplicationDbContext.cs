@@ -58,6 +58,9 @@ namespace Octopus.Data
             modelBuilder.Entity<Recarga>().Ignore(p => p.Ok);
             modelBuilder.Entity<Recarga>().Ignore(p => p.WSTempName);
             modelBuilder.Entity<Image>().Ignore(p => p.File);
+            modelBuilder.Entity<Recarga>().Ignore(p => p.ServReference);
+            modelBuilder.Entity<Recarga>().Ignore(p => p.ServReferenceConf);
+            
             base.OnModelCreating(modelBuilder);
         }
 

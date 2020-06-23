@@ -61,8 +61,10 @@ namespace Octopus.Controllers
             var userId = getCurrentUserId("id");
             var users = await _context.Users.Where(s => s.CreatedBy == userId || s.Id == userId).Include(s=>s.Cartera).AsNoTracking().ToListAsync();
             var currentUser = users.Find(s => s.Id == userId);
-            ViewBag.useId = currentUser.Cartera;
+            ViewBag.useId = currentUser.Id;
             users.Remove(currentUser);
+            users = users.Prepend(currentUser).ToList();
+           
 
             /* IdentityResult result = await _roleManager.CreateAsync(new IdentityRole("Superadmin"));
              await _roleManager.CreateAsync(new IdentityRole("Administrador"));
@@ -353,7 +355,7 @@ namespace Octopus.Controllers
                             carteraUpdate.SaldoNormal += carteraTransaction.Monto;
                             carteraUpdate.SaldoTAE += saldoComisionH;
                             //carteraUpdate.SaldoTAE += carteraTransaction.Monto;
-                            //carteraUpdate.Asignado += carteraTransaction.Monto;
+                            carteraUpdate.Asignado += carteraTransaction.Monto;
                             _context.Entry(carteraUpdate).State = EntityState.Modified;
 
 
@@ -384,7 +386,7 @@ namespace Octopus.Controllers
                             carteraUpdate.SaldoNormal -= carteraTransaction.Monto;
                             carteraUpdate.SaldoTAE -= saldoComisionH;
                             //carteraUpdate.SaldoTAE -= carteraTransaction.Monto;
-                            //carteraUpdate.Asignado += carteraTransaction.Monto;
+                            carteraUpdate.Asignado -= carteraTransaction.Monto;
                             _context.Entry(carteraUpdate).State = EntityState.Modified;
 
                             //actualizando cartera de padre

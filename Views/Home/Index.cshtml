@@ -2,10 +2,21 @@
     ViewData["Title"] = "Inicio";
 }
     <div class="container contRecargar">
-      
-        
+
+        @if (SignInManager.IsSignedIn(User))
+        {
+            @if (User.IsInRole("Administrador"))
+            {
+                await Html.RenderPartialAsync("/Views/Recargas/Index.cshtml", null);
+            }
+        }
+        else
+        {
             <h1 class="display-3 mb-1">Octopus</h1>
             <p class="lead">Realiza recargas electronicas y <span>paga tus servicios.</span>.</p>
-    
+
+        }
+
+
     </div>
  
