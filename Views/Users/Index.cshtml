@@ -3,9 +3,10 @@
 @using Microsoft.AspNetCore.Identity
 @{
     var userId = ViewBag.userId;
+    var pageName = "CarteraTransactions";
 }
 
-    <input hidden id="pageType" name="Users" />
+
 <!--a id="errorLbl" class="text-danger col-12"></!--a-->
 <div class="main col-lg-12 form-inline">
  
@@ -32,32 +33,34 @@
 
 
                 <th>
-                    Inicial
+                    Saldo
                 </th>
-
                 <th>
                     TAE
                 </th>
+                <th>
+                    Inicial
+                </th>
+                <th>
+                    Venta
+                </th>
 
+
+                <th>
+                    Asignado
+                </th>
 
                 <th>
                     Enviado
                 </th>
                 <th>
-                    Asignado
+                    Transacciones
                 </th>
+
                 <th>
-                    Saldo
+                    Acciones
                 </th>
-                
-                    <th>
-                        Transacciones
-                    </th>
-               
-                    <th>
-                        Acciones
-                    </th>
-                </tr>
+            </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
@@ -74,86 +77,96 @@
 
                 @if (item.Cartera != null)
                 {
+
                     <td>
-                        <a>@item.Cartera.Inicial</a>
+                        <input type="hidden" id="sglob-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoNormal" value="@String.Format("{0:0.00}",@item.Cartera.SaldoNormal)" />
+                        <a id="aglob-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.SaldoNormal)</a>
                     </td>
                     <td>
                         <input type="hidden" id="stae-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoTAE" value="@String.Format("{0:0.00}",@item.Cartera.SaldoTAE)" />
                         <a id="atae-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.SaldoTAE)</a>
                     </td>
-
                     <td>
-                        <a>@String.Format("{0:0.00}", @item.Cartera.Enviado)</a>
+                        <a>@String.Format("{0:0.00}", @item.Cartera.Inicial)</a>
                     </td>
+                    <td>
+                        <a>@item.Cartera.Venta</a>
+                    </td>
+
 
                     <td>
                         <input type="hidden" id="sasig-@item.Cartera.Id" disabled step=".01" asp-for="@item.Cartera.Asignado" value="@String.Format("{0:0.00}",@item.Cartera.Asignado)" />
                         <a id="aasig-@item.Cartera.Id">@String.Format("{0:0.00}", @item.Cartera.Asignado)</a>
                     </td>
                     <td>
-                        <input type="hidden" id="sglob-@item.Cartera.Id" step=".01" asp-for="@item.Cartera.SaldoNormal" value="@String.Format("{0:0.00}",@item.Cartera.SaldoNormal)" />
-                        <a id="aglob-@item.Cartera.Id">@item.Cartera.SaldoNormal</a>
+                        <a>@String.Format("{0:0.00}", @item.Cartera.Enviado)</a>
                     </td>
+
                     @if (userId != item.Id)
                     {
-            <td>
-                @if (User.FindFirstValue(ClaimTypes.NameIdentifier) != item.Id)
-                {
-                    <div class="row">
+                        <td>
+                            @if (User.FindFirstValue(ClaimTypes.NameIdentifier) != item.Id)
+                            {
+                                <div class="row">
 
-                        <input type="number" id="cant-@item.Cartera.Id" step=".01" value="0" />
 
-                    </div>
-                    <div class="row">
+                                    <input class="col-12" type="text" id="comment-@item.Cartera.Id" placeholder="Descripción" />
+                                    <input hidden type="text" id="phone-@item.Cartera.Id" value="@item.PhoneNumber" />
+                                </div>
+                                <div class="row">
+                                    <input class="col-6" type="number" id="cant-@item.Cartera.Id" step=".01" value="0" />
+                                    <input type="button" onclick="ajaxSaldoN(name)" id="btnGlobal-@item.Cartera.Id" name="@item.Cartera.Id"
+                                           value="Asignar" class="btn btn-primary col-6" />
 
-                        <input type="button" onclick="ajaxSaldoN(name)" id="btnGlobal-@item.Cartera.Id" name="@item.Cartera.Id"
-                               value="Asignar" class="btn btn-primary" />
-                    </div>
-                }
-                else
-                {
-                    <button value="CarteraTransactions" class="btn btn-md btn-block btn-warning col-8 mx-auto" onclick="showModal(this)" id="@item.Id" name="Index">Detalles</button>
-                }
-            </td>
+                                    <button value="@item.CarteraId" class="btn btn-warning" onclick='setPageType(this,"@pageName")' id="1" name="Index">Detalles</button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row" style="max-height:30px">
+                                    <button value="@item.CarteraId" class="btn btn-sm btn-block btn-warning col-8 mx-auto" id="1" name="Index" onclick='setPageType(this,"@pageName")'>Detalles</button>
+                                </div>
+                            }
+                        </td>
                     }
                     else
                     {
                         <td></td>
-                            }
+                    }
 
 
 
-                            }
-                            else
-                            {
-                        <td>
-                            0
-                        </td>
-                        <td>
-                            0
-                        </td>
+                }
+                else
+                {
+                    <td>
+                        0
+                    </td>
+                    <td>
+                        0
+                    </td>
 
-                        <td>
-                            0
-                        </td>
-                        <td>
-                            0
-                        </td>
-                        <td>
-                            0
-                            <input type="button" onclick="sendAjaxMsg(name)" id="btn-@item.Id" name="@item.Id" value="Asignar" class="btn btn-primary" />
-                            @Html.ActionLink("Crear", "CrearUnWallet", "Carteras", new { userId = @item.Id }, new { @class = "btn btn-primary" })
-                        </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                        0
+                    </td>
+                    <td>
+                        0
+                        <input type="button" onclick="sendAjaxMsg(name)" id="btn-@item.Id" name="@item.Id" value="Asignar" class="btn btn-primary" />
+                        @Html.ActionLink("Crear", "CrearUnWallet", "Carteras", new { userId = @item.Id }, new { @class = "btn btn-primary" })
+                    </td>
 
-                        }
-                        <td>
-                            <!--a class="btn btn-block btn-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a-->
-                            <a class="btn btn-md btn-block btn-success col-8 mx-auto" onclick="showModal(this)" id="@item.Id" name="Edit">Editar</a>
+                }
+                <td>
+                    <!--a class="btn btn-block btn-warning" asp-action="Edit" asp-route-id="@item.Id">Editar</a-->
+                    <button value="Users" class="btn btn-md btn-block btn-success col-8 mx-auto" onclick="showModal(this)" id="@item.Id" name="Edit">Editar</button>
 
-                            <!--a asp-action="Delete" class="btn btn-block btn-danger" asp-route-id="@item.Id">Global</!--a-->
-                            <!--a class="btn btn-outline-success btn-block" asp-controller="Wallets" asp-action="CrearUnWallet">Wallet</a-->
-                        </td>
-                    </tr>
+                    <!--a asp-action="Delete" class="btn btn-block btn-danger" asp-route-id="@item.Id">Global</!--a-->
+                    <!--a class="btn btn-outline-success btn-block" asp-controller="Wallets" asp-action="CrearUnWallet">Wallet</a-->
+                </td>
+            </tr>
             }
         </tbody>
     </table>
@@ -262,7 +275,9 @@
             var cant = document.getElementById("cant-" + val).value;
             var saldoGlobal = document.getElementById("sglob-" + val).value;
             var saldoTAE = document.getElementById("stae-" + val).value;
-
+           
+            var phoneUser = document.getElementById("phone-" + val).value;
+           
             /* var regionId = document.getElementById("regId-" + val).value;
             //var status = document.getElementById("status-" + val).checked;*/
 
@@ -279,6 +294,8 @@
 
                 var opDesc = "Abono-Global";
             }
+            var comment = document.getElementById("comment-" + val).value != "" ? document.getElementById("comment-" + val).value : opDesc;
+
             saldoTAE = + saldoTAE + +cant;
 
 
@@ -294,6 +311,7 @@
                         OperacionDesc: opDesc,
                         Monto: cant,
                         CarteraId: val,
+                        CarrierResponse: phoneUser +" - "+ comment
                     },
 
                     // dataType: 'json',

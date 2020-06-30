@@ -14,41 +14,55 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
 #nullable restore
 #line 1 "/Users/flex/Documents/OctopusMVC-master/Octopus/Views/_ViewImports.cshtml"
-using Octopus;
+using Microsoft.EntityFrameworkCore;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 2 "/Users/flex/Documents/OctopusMVC-master/Octopus/Views/_ViewImports.cshtml"
-using Octopus.Models;
+using Octopus;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 3 "/Users/flex/Documents/OctopusMVC-master/Octopus/Views/_ViewImports.cshtml"
-using Microsoft.AspNetCore.Authorization;
+using Octopus.Models;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 4 "/Users/flex/Documents/OctopusMVC-master/Octopus/Views/_ViewImports.cshtml"
-using Microsoft.AspNetCore.Identity;
+using Octopus.Helpers;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 5 "/Users/flex/Documents/OctopusMVC-master/Octopus/Views/_ViewImports.cshtml"
+using Microsoft.AspNetCore.Authorization;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 6 "/Users/flex/Documents/OctopusMVC-master/Octopus/Views/_ViewImports.cshtml"
+using Microsoft.AspNetCore.Identity;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 7 "/Users/flex/Documents/OctopusMVC-master/Octopus/Views/_ViewImports.cshtml"
 using System.Security.Claims;
 
 #line default
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"6c195db332af25d2a586365b3383dc335abaa7bf", @"/Views/Regions/Index.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"8dc197defe10460f48a07a27c889821223e401bc", @"/Views/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"4d1f1972b413f3d58ddfa639af3814dc98b892d9", @"/Views/_ViewImports.cshtml")]
     public class Views_Regions_Index : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<IEnumerable<Octopus.Models.Region>>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("class", new global::Microsoft.AspNetCore.Html.HtmlString("btn btn-danger btn-sm"), global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
@@ -94,7 +108,7 @@ using System.Security.Claims;
 #line hidden
 #nullable disable
             WriteLiteral("\n<h1>Regions</h1>\n\n<p class=\"row\">\n    ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf6657", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf7013", async() => {
                 WriteLiteral("Back");
             }
             );
@@ -115,7 +129,7 @@ using System.Security.Claims;
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral("\n\n    ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf8282", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf8638", async() => {
                 WriteLiteral("Create New");
             }
             );
@@ -156,7 +170,7 @@ using System.Security.Claims;
 #line hidden
 #nullable disable
             WriteLiteral("\n            </td>\n            <td>\n                ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf10488", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf10844", async() => {
                 WriteLiteral("Edit");
             }
             );
@@ -187,7 +201,7 @@ using System.Security.Claims;
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral(" |\n                ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf12616", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf12972", async() => {
                 WriteLiteral("Details");
             }
             );
@@ -218,7 +232,7 @@ using System.Security.Claims;
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral(" |\n                ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf14750", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6c195db332af25d2a586365b3383dc335abaa7bf15106", async() => {
                 WriteLiteral("Delete");
             }
             );

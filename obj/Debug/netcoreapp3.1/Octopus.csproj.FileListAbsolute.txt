@@ -1,3 +1,4 @@
+/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/web.config
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/appsettings.Development.json
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/appsettings.json
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/mono_crash.91852a957.0.json
@@ -11,6 +12,9 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Octopus.Views.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Octopus.Views.pdb
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Antlr3.Runtime.dll
+/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Azure.Core.dll
+/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Azure.Storage.Blobs.dll
+/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Azure.Storage.Common.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Karambolo.AspNetCore.Bundling.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Karambolo.AspNetCore.Bundling.NUglify.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/System.Web.Optimization.dll
@@ -86,6 +90,7 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/System.Security.Cryptography.ProtectedData.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/System.Text.Json.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/WebGrease.dll
+/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Microsoft.WindowsAzure.Storage.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/cs/Microsoft.CodeAnalysis.resources.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/de/Microsoft.CodeAnalysis.resources.dll
 /Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/es/Microsoft.CodeAnalysis.resources.dll
@@ -231,6 +236,11 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Grupos/Index.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Home/Index.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Home/Privacy.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Create.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Delete.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Details.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Edit.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Index.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Ladas/Create.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Ladas/Delete.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Ladas/Details.cshtml.g.cs
@@ -241,6 +251,11 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Montoes/Details.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Montoes/Edit.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Montoes/Index.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Create.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Delete.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Details.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Edit.cshtml.g.cs
+/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Index.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Recargas/Create.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Recargas/Delete.cshtml.g.cs
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Recargas/Details.cshtml.g.cs
@@ -308,18 +323,3 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Octopus.pdb
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Octopus.genruntimeconfig.cache
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Octopus.csprojAssemblyReference.cache
-/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Azure.Core.dll
-/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Azure.Storage.Blobs.dll
-/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Azure.Storage.Common.dll
-/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/Microsoft.WindowsAzure.Storage.dll
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Create.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Delete.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Details.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Edit.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Productos/Index.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Create.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Delete.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Details.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Edit.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Debug/netcoreapp3.1/Razor/Views/Images/Index.cshtml.g.cs
-/Users/flex/Documents/OctopusMVC-master/Octopus/bin/Debug/netcoreapp3.1/web.config

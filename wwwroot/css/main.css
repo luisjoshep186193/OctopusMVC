@@ -2,12 +2,16 @@
     background-color: beige;
     background-image: url('/images/back.png');
 }
-
+.backCont {
+background-color:darkslateblue;
+border-radius:10px;
+height:100%;
+}
 .jumbotron {
     margin-top: 15px;
     text-align: center;
     padding-bottom: 10rem;
-    background-color:white !important;
+    background-color: white !important;
 }
 
 .lead span {

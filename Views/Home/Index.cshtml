@@ -7,13 +7,21 @@
         {
             @if (User.IsInRole("Administrador"))
             {
-                await Html.RenderPartialAsync("/Views/Recargas/Index.cshtml", null);
+                DateTime dateInit = DateTime.Today;
+                DateTime dateEnd = DateTime.Now;
+                IQueryable<Recarga> recargasQuery = context.Recargas
+                    .Where(s => s.DateCreated >= dateInit && s.DateCreated <= dateEnd)
+                        .Include(r => r.Carrier).Include(r => r.Monto)
+                        .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking()
+                        .OrderByDescending(s => s.DateCreated);
+                await Html.RenderPartialAsync("/Views/Recargas/Index.cshtml", PaginadorGenerico<Recarga>.Create(recargasQuery, 0, 10));
             }
         }
         else
         {
             <h1 class="display-3 mb-1">Octopus</h1>
             <p class="lead">Realiza recargas electronicas y <span>paga tus servicios.</span>.</p>
+           // await Html.RenderPartialAsync("~/Identity/Pages/Account/Login.cshtml");
 
         }
 

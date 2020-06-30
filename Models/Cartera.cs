@@ -15,14 +15,15 @@ namespace Octopus.Models
         public double? ComisionTAE { get; set; }
         [DisplayName("Asignado")]
         public double? Asignado { get; set; }
-        [DisplayName("Asignado")]
+        [DisplayName("Inicial")]
         public double? Inicial { get; set; }
-        [DisplayName("Asignado")]
+        [DisplayName("Venta")]
         public double? Venta { get; set; }
         [DisplayName("Enviado")]
         public double? Enviado { get; set; }
         public double CuotaServicios { get; set; }
         public int UserLevel { get; set; }
+        public DateTime DateReset { get; set; }
         
 
         public string OwnerId { get; set; }

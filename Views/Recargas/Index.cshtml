@@ -2,106 +2,110 @@
 
 @{
     ViewData["Title"] = "Index";
+    var carteraId = ViewBag.carteraId != null ? ViewBag.carteraId : 0;
 }
 
-<input hidden id="pageType" name="Recargas" />
+
 @if (!User.IsInRole("Administrador"))
 {
-<div class="col-12 mt-10 mb-10">
-    <a class="btn btn-sm btn-block btn-outline-primary col-8 mx-auto" id="" name="getConsulta" onclick="showModal(this)">Nueva Consulta</a>
-</div>
+    <div class="row" style="max-height:30px">
+        <button value="@carteraId" class="btn btn-sm btn-block btn-warning col-6 mx-auto" id="1" name="Index" onclick="newSearch(this,1)">Nueva búsqueda</button>
+    </div>
 }
-    
-    <table class="table table-dark table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>
-                    Teléfono
-                </th>
-                <th>
-                    Fecha
-                </th>
+<h6>Total: <small>@ViewBag.total</small></h6>
+<table class="table table-dark table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                Teléfono
+            </th>
+            <th>
+                Fecha
+            </th>
 
-                <th>
-                    Acuse
-                </th>
-                <th>
-                    Estado
-                </th>
-                <th>
-                    Nombre
-                </th>
-                <th>
-                    Monto
-                </th>
-                <th>
-                    Compañía
-                </th>
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    @if (User.IsInRole("Administrador"))
-                    {
-                        <th>
-                            WS
-                        </th>
-                        <th></th>
-                    }
-                }
-
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null)
+            <th>
+                Acuse
+            </th>
+            <th>
+                Estado
+            </th>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Monto
+            </th>
+            <th>
+                Compañía
+            </th>
+            @if (SignInManager.IsSignedIn(User))
             {
-                @foreach (var item in Model.Resultado)
+                @if (User.IsInRole("Administrador"))
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.PhoneNumber)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DateCreated)
-                        </td>
-
-                        <td>
-                            @Html.DisplayFor(modelItem => item.StatusCode)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Status.StatusDesc)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.User.Nombre)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Monto.MontoCant)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Carrier.CarrierName)
-                        </td>
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            @if (User.IsInRole("Administrador"))
-                            {
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.WebServDesc.WebServiceName)
-                                </td>
-                                <td>
-                                    <a style="color:white" class="btn btn-success" name="Details" id="@item.Id" onclick="showModal(this)">Detalle</a>
-                                </td>
-                            }
-                        }
-
-
-                    </tr>
+                    <th>
+                        WS
+                    </th>
+                    <th></th>
                 }
             }
 
-        </tbody>
-    </table>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var item in Model.Resultado)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PhoneNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateCreated)
+                    </td>
 
-    @*CÓDIGO PARA EL PAGINADOR DE REGISTROS*@
-    @if (Model != null)
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StatusCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status.StatusDesc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Monto.MontoCant)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Carrier.CarrierName)
+                    </td>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <td>
+                                @Html.DisplayFor(modelItem => item.WebServDesc.WebServiceName)
+                            </td>
+                            <td>
+                                <a style="color:white" class="btn btn-success" name="Details" id="@item.Id" onclick="showModal(this)">Detalle</a>
+                            </td>
+                        }
+                    }
+
+
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+
+@*CÓDIGO PARA EL PAGINADOR DE REGISTROS*@
+@if (Model != null)
+{
+    if (Model.RegistrosPorPagina != 0)
     {
+
         if (Model.Resultado.Count() > 0)
         {
             <span>
@@ -123,47 +127,32 @@
         if (Model.PaginaActual > 1)
         {
             var pag = Model.PaginaActual - 1;
-            <button onclick="getPage(this)" name="Recargas" value="1" class="btn btn-sm btn-default">Primera</button>
-            @*Html.ActionLink("<<", "Index", new { pagina = 1 },
-                new { @class = "btn btn-sm btn-default" })*@
+            <button onclick="showModal(this,1)" name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Primera</button>
             <span></span>
-            <button onclick="getPage(this)" name="Recargas" value="@pag" class="btn btn-sm btn-default">Anterior</button>
-            @*Html.ActionLink("Anterior", "Index", new { pagina = Model.PaginaActual - 1 },
-                new { @class = "btn btn-sm btn-default" })*@
+            <button onclick="showModal(this,1)" name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Anterior</button>
         }
         else
         {
-            <button disabled onclick="getPage(this)" name="Recargas" value="1" class="btn btn-sm btn-default">Primera</button>
-            @*Html.ActionLink("<<", "Index", new { pagina = 1 },
-                new { @class = "btn btn-sm btn-default disabled" })*@
+            <button disabled onclick="showModal(this,1)" name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Primera</button>
             <span></span>
-            <button disabled onclick="getPage(this)" name="Recargas" value="1" class="btn btn-sm btn-default">Anterior</button>
-            @*Html.ActionLink("Anterior", "Index", new { pagina = 1 },
-                new { @class = "btn btn-sm btn-default disabled" })*@
+            <button disabled onclick="showModal(this,1)" name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Anterior</button>
         }
         <span></span>
         if (Model.PaginaActual < Model.TotalPaginas)
         {
             var pag = Model.PaginaActual + 1;
-            <button onclick="getPage(this)" name="Recargas" value="@pag" class="btn btn-sm btn-default">Siguiente</button>
-            @*Html.ActionLink("Siguiente", "Index", new { pagina = Model.PaginaActual + 1 },
-                new { @class = "btn btn-sm btn-default" })*@
+            <button onclick='showModal(this,"@pag")' name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Siguiente</button>
             <span></span>
-            <button onclick="getPage(this)" name="Recargas" value="@Model.TotalPaginas" class="btn btn-sm btn-default">Última</button>
-            @*Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
-                new { @class = "btn btn-sm btn-default" })*@
+            <button onclick='showModal(this,"@Model.TotalPaginas")' name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Última</button>
         }
         else
         {
             var pag = Model.TotalPaginas - 1;
-            <button disabled onclick="getPage(this)" name="Recargas" value="@pag" class="btn btn-sm btn-default">Siguiente</button>
-            @*Html.ActionLink("Siguiente", "Index", new { pagina = Model.TotalPaginas - 1 },
-                new { @class = "btn btn-sm btn-default disabled" })*@
+            <button disabled onclick='showModal(this,"@pag")' name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Siguiente</button>
             <span></span>
-            <button disabled onclick="getPage(this)" name="Recargas" value="@Model.TotalPaginas" class="btn btn-sm btn-default">Última</button>
-            @*Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
-                new { @class = "btn btn-sm btn-default disabled" })*@
+            <button disabled onclick='showModal(this,"@Model.TotalPaginas")' name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Última</button>
         }
-
     }
+
+}
 

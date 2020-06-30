@@ -58,20 +58,32 @@ namespace Octopus.Controllers
         // GET: Users
         public async Task<IActionResult> Index(bool partial = false)
         {
+            var currentDate = DateTime.Today;
             var userId = getCurrentUserId("id");
-            var users = await _context.Users.Where(s => s.CreatedBy == userId || s.Id == userId).Include(s=>s.Cartera).AsNoTracking().ToListAsync();
+             var users = await _context.Users.Where(s => s.CreatedBy == userId || s.Id == userId).Include(s=>s.Cartera).AsNoTracking().ToListAsync();
+            //var users = await _context.Users.Include(s => s.Cartera).AsNoTracking().ToListAsync();
             var currentUser = users.Find(s => s.Id == userId);
             ViewBag.useId = currentUser.Id;
             users.Remove(currentUser);
             users = users.Prepend(currentUser).ToList();
-           
+            foreach (var user in users)
+            {
+             
+                double totalSales = await _context.CarteraTransactions
+                    .Where(s => s.CarteraId == user.CarteraId && s.FechaOperation >= currentDate
+                    && (s.OperacionDesc.Contains("Recarga Exitosa")
+                   || s.OperacionDesc.Contains("Operación Exitosa")))
+                    .SumAsync(s=>s.Monto);
+                double abono = await _context.CarteraTransactions
+                    .Where(s => s.CarteraId == user.CarteraId && s.OperacionDesc.Equals("Abono-Global")
+                    && s.FechaOperation >= currentDate).SumAsync(s => s.Monto);
+                user.Cartera.Asignado = abono;
+                user.Cartera.Venta = totalSales;
+                user.Cartera.Inicial = user.Cartera.SaldoNormal + totalSales - abono;
 
-            /* IdentityResult result = await _roleManager.CreateAsync(new IdentityRole("Superadmin"));
-             await _roleManager.CreateAsync(new IdentityRole("Administrador"));
-             await _roleManager.CreateAsync(new IdentityRole("Servicios"));
-             /* if (!result.Succeeded)
-              return RedirectToAction("Index", "Home");
-               else*/
+            }
+
+          
             if (partial)
                 return PartialView(users);
 
@@ -266,7 +278,7 @@ namespace Octopus.Controllers
         }
         [HttpPost]
      
-        public async Task<double> NewTransactionTAE([Bind("Id,OperacionDesc,Monto,CarteraId")] CarteraTransaction carteraTransaction)
+        /*public async Task<double> NewTransactionTAE([Bind("Id,OperacionDesc,Monto,CarteraId")] CarteraTransaction carteraTransaction)
         {
             if (ModelState.IsValid)
             {
@@ -305,7 +317,7 @@ namespace Octopus.Controllers
                             carteraUpdate.Asignado += carteraTransaction.Monto;
                             _context.Entry(carteraUpdate).State = EntityState.Modified;
 
-                            //actualizando cartera de padre abuelo y superuser
+                            //actualizando cartera de padre
                             userCartera.Cartera.SaldoTAE -= carteraTransaction.Monto;
                             userCartera.Cartera.Enviado += carteraTransaction.Monto;
                             await _context.SaveChangesAsync();
@@ -329,12 +341,14 @@ namespace Octopus.Controllers
             }
                 return -999.99;
         }
+        */
         [HttpPost]
 
-        public async Task<double> NewTransactionGlobal([Bind("Id,OperacionDesc,Monto,CarteraId")] CarteraTransaction carteraTransaction)
+        public async Task<double> NewTransactionGlobal([Bind("Id,OperacionDesc,Monto,CarteraId,CarrierResponse")] CarteraTransaction carteraTransaction)
         {
             if (ModelState.IsValid)
             {
+                carteraTransaction.FechaOperation = DateTime.Now;
                 carteraTransaction.Monto = System.Math.Abs(carteraTransaction.Monto);
                 var userCartera = await getCurrentUser();
                 var carteraUpdate = await _context.Carteras.FirstOrDefaultAsync(s => s.Id == carteraTransaction.CarteraId);
@@ -345,71 +359,93 @@ namespace Octopus.Controllers
 
                 var saldoComisionH = carteraTransaction.Monto + comisionHijo;
                 var saldoComisionP = carteraTransaction.Monto + comisionPadre;
-
-                switch (carteraTransaction.OperacionDesc)
+                CarteraTransaction padreTransaction = new CarteraTransaction
                 {
-                    case "Abono-Global":
-                        if (userCartera.Cartera.SaldoNormal >= carteraTransaction.Monto)
-                        {
-                            //actualizando cartera de hijo
-                            carteraUpdate.SaldoNormal += carteraTransaction.Monto;
-                            carteraUpdate.SaldoTAE += saldoComisionH;
-                            //carteraUpdate.SaldoTAE += carteraTransaction.Monto;
-                            carteraUpdate.Asignado += carteraTransaction.Monto;
-                            _context.Entry(carteraUpdate).State = EntityState.Modified;
+                    FechaOperation = carteraTransaction.FechaOperation,
+                    Monto = carteraTransaction.Monto,
+                    CarteraId = userCartera.Cartera.Id,
+                    CarrierResponse = carteraTransaction.CarrierResponse,
+                    OperacionDesc = carteraTransaction.OperacionDesc
+
+                };
+                try
+                {
+                    switch (carteraTransaction.OperacionDesc)
+                    {
+                        case "Abono-Global":
+                            if (userCartera.Cartera.SaldoNormal >= carteraTransaction.Monto)
+                            {
+                                //actualizando cartera de hijo
+                                carteraUpdate.SaldoNormal += carteraTransaction.Monto;
+                                carteraUpdate.SaldoTAE += saldoComisionH;
+                                //carteraUpdate.SaldoTAE += carteraTransaction.Monto;
+                                carteraUpdate.Asignado += carteraTransaction.Monto;
+                                _context.Entry(carteraUpdate).State = EntityState.Modified;
 
 
-                            //actualizando cartera de padre
-                            userCartera.Cartera.SaldoNormal -= carteraTransaction.Monto;
-                            userCartera.Cartera.SaldoTAE -= saldoComisionH;
-                            //userCartera.Cartera.SaldoTAE -= carteraTransaction.Monto;
+                                //actualizando cartera de padre
+                                userCartera.Cartera.SaldoNormal -= carteraTransaction.Monto;
+                                userCartera.Cartera.SaldoTAE -= saldoComisionH;
+                                //userCartera.Cartera.SaldoTAE -= carteraTransaction.Monto;
 
 
-                            userCartera.Cartera.Enviado += carteraTransaction.Monto;
-                            _context.Entry(userCartera.Cartera).State = EntityState.Modified;
-                            await _context.SaveChangesAsync();
-                            //Agregando transaccion a la cartera
-                            _context.CarteraTransactions.Add(carteraTransaction);
-                            await _context.SaveChangesAsync();
-                            return carteraUpdate.SaldoNormal;
-                        }
-                        else
-                        {
-                            return -999.99;
-                        }
-                    #region GET ALL WALLETS
-                    case "Reverso-Global": //get all wallets to remove comision
-                        var montoPositive = Math.Abs(carteraTransaction.Monto);
-                        if (montoPositive <= carteraUpdate.SaldoNormal)
-                        {
-                            //Actualizando saldo de hijo
-                            carteraUpdate.SaldoNormal -= carteraTransaction.Monto;
-                            carteraUpdate.SaldoTAE -= saldoComisionH;
-                            //carteraUpdate.SaldoTAE -= carteraTransaction.Monto;
-                            carteraUpdate.Asignado -= carteraTransaction.Monto;
-                            _context.Entry(carteraUpdate).State = EntityState.Modified;
+                                userCartera.Cartera.Enviado += carteraTransaction.Monto;
+                                _context.Entry(userCartera.Cartera).State = EntityState.Modified;
+                                await _context.SaveChangesAsync();
+                                //Agregando transaccion a la cartera hijo
+                                _context.CarteraTransactions.Add(carteraTransaction);
+                                await _context.SaveChangesAsync();
+                                //Agregando transaccion a la cartera padre
 
-                            //actualizando cartera de padre
-                            userCartera.Cartera.SaldoNormal += carteraTransaction.Monto;
-                            userCartera.Cartera.SaldoTAE += saldoComisionH;
-                            //userCartera.Cartera.SaldoTAE += carteraTransaction.Monto;
 
-                            userCartera.Cartera.Enviado -= carteraTransaction.Monto;
-                            _context.Entry(userCartera.Cartera).State = EntityState.Modified;
-                            await _context.SaveChangesAsync();
-                            //Agregando transaccion a la cartera
-                            _context.CarteraTransactions.Add(carteraTransaction);
-                            await _context.SaveChangesAsync();
-                            return carteraUpdate.SaldoNormal;
-                        }
-                        #endregion
-                        else
-                        {
-                            return -999.99;
-                        }
+                                _context.CarteraTransactions.Add(padreTransaction);
+                                await _context.SaveChangesAsync();
+                                return carteraUpdate.SaldoNormal;
+                            }
+                            else
+                            {
+                                return -999.99;
+                            }
+                        #region GET ALL WALLETS
+                        case "Reverso-Global": //get all wallets to remove comision
+                            var montoPositive = Math.Abs(carteraTransaction.Monto);
+                            if (montoPositive <= carteraUpdate.SaldoNormal)
+                            {
+                                //Actualizando saldo de hijo
+                                carteraUpdate.SaldoNormal -= carteraTransaction.Monto;
+                                carteraUpdate.SaldoTAE -= saldoComisionH;
+                                //carteraUpdate.SaldoTAE -= carteraTransaction.Monto;
+                                carteraUpdate.Asignado -= carteraTransaction.Monto;
+                                _context.Entry(carteraUpdate).State = EntityState.Modified;
 
+                                //actualizando cartera de padre
+                                userCartera.Cartera.SaldoNormal += carteraTransaction.Monto;
+                                userCartera.Cartera.SaldoTAE += saldoComisionH;
+                                //userCartera.Cartera.SaldoTAE += carteraTransaction.Monto;
+
+                                userCartera.Cartera.Enviado -= carteraTransaction.Monto;
+                                _context.Entry(userCartera.Cartera).State = EntityState.Modified;
+                                await _context.SaveChangesAsync();
+                                //Agregando transaccion a la cartera hijo
+                                _context.CarteraTransactions.Add(carteraTransaction);
+                                //Agregando transaccion a la cartera padre
+
+                                await _context.SaveChangesAsync();
+                                _context.CarteraTransactions.Add(padreTransaction);
+                                await _context.SaveChangesAsync();
+                                return carteraUpdate.SaldoNormal;
+                            }
+                            #endregion
+                            else
+                            {
+                                return -999.99;
+                            }
+
+                    }
+                }catch(Exception e)
+                {
+                    Console.WriteLine(e.ToString());
                 }
-
 
                 //actualizando cartera de hijo
 

@@ -1,40 +1,122 @@
-@model IEnumerable<Octopus.Models.CarteraTransaction>
+@model Octopus.Helpers.PaginadorGenerico<CarteraTransaction>
 
 @{
     ViewData["Title"] = "Mis Transacciones";
+    var pageName = "Recargas";
+    var carteraId = ViewBag.carteraId != null ? ViewBag.carteraId : 0;
+    var rowClass = User.IsInRole("Administrador") ?"col-4": "col-8";
 }
 
+@if (Model.RegistrosPorPagina != 3)
+{
+    <div class="row" style="max-height:30px">
+        <button value="@carteraId" class="btn btn-sm btn-block btn-warning col-6 mx-auto" id="1" name="Index" onclick="newSearch(this,1)">Nueva búsqueda</button>
+    </div>
+}
 
 <div class="row">
-    <div class="col-5">
+    <div class="@rowClass">
         <h7>Operación</h7>
     </div>
-    <div class="col-3">
+    <div class="col-2">
         <h7>Cantidad </h7>
     </div>
-    <div class="col-4">
+    <div class="col-2">
         <h7>Fecha</h7>
 
     </div>
+    @if (User.IsInRole("Administrador"))
+    {
+        <div class="@rowClass">
+            <h7>Desc</h7>
+
+        </div>
+    }
 
 </div>
-@foreach (var item in Model)
+@foreach (var item in Model.Resultado)
 {
-    <div class="row">
-        <div class="col-5">
-            <small>@Html.DisplayFor(modelItem => item.OperacionDesc)</small>
-        </div>
-        <div class="col-3">
-            <small>@Html.DisplayFor(modelItem => item.Monto)</small>
-        </div>
-        <div class="col-4">
-            <small>@Html.DisplayFor(modelItem => item.FechaOperation)</small>
-
-        </div>
+<div class="row">
+    <div class="@rowClass">
+        <small>@Html.DisplayFor(modelItem => item.OperacionDesc)</small>
+    </div>
+    <div class="col-2">
+        <small>@Html.DisplayFor(modelItem => item.Monto)</small>
+    </div>
+    <div class="col-2">
+        <small>@Html.DisplayFor(modelItem => item.FechaOperation)</small>
 
     </div>
+    @if (User.IsInRole("Administrador"))
+    {
+<div class="@rowClass">
+    <small>@Html.DisplayFor(modelItem => item.CarrierResponse)</small>
+
+</div>
+    }
+</div>
 
 }
-<div class="row" style="max-height:30px">
-    <a class="btn btn-sm btn-block btn-outline-primary col-8 mx-auto" id="" name="getReporteAll" onclick="showModal(this)">Reporte Detallado</a>
-</div>
+@*CÓDIGO PARA EL PAGINADOR DE REGISTROS*@
+@if (Model != null)
+{
+    if (Model.RegistrosPorPagina != 3)
+    {
+
+        if (Model.Resultado.Count() > 0)
+        {
+            <span>
+                <strong>@Model.TotalRegistros</strong> registros encontrados
+            </span>
+            <span>&nbsp;|&nbsp;</span>
+            <span>
+                Página <strong>@(Model.PaginaActual)</strong> de
+                <strong>@Model.TotalPaginas</strong>
+            </span>
+            <span>&nbsp;|&nbsp;</span>
+        }
+        else
+        {
+            <span>No hay resultados para esta búsqueda</span>
+            <span>&nbsp;|&nbsp;</span>
+        }
+
+        if (Model.PaginaActual > 1)
+        {
+            var pag = Model.PaginaActual - 1;
+            <button onclick="showModal(this,1)" name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Primera</button>
+            <span></span>
+            <button onclick="showModal(this,1)" name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Anterior</button>
+        }
+        else
+        {
+            <button disabled onclick="showModal(this,1)" name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Primera</button>
+            <span></span>
+            <button disabled onclick="showModal(this,1)" name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Anterior</button>
+        }
+        <span></span>
+        if (Model.PaginaActual < Model.TotalPaginas)
+        {
+            var pag = Model.PaginaActual + 1;
+            <button onclick='showModal(this,"@pag")' name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Siguiente</button>
+            <span></span>
+            <button onclick='showModal(this,"@Model.TotalPaginas")' name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Última</button>
+        }
+        else
+        {
+            var pag = Model.TotalPaginas - 1;
+            <button disabled onclick='showModal(this,"@pag")' name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Siguiente</button>
+            <span></span>
+            <button disabled onclick='showModal(this,"@Model.TotalPaginas")' name="IndexP" value="@carteraId" class="btn btn-sm btn-default">Última</button>
+        }
+    }
+
+}
+
+@if (Model.RegistrosPorPagina == 3)
+{
+    <div class="row" style="max-height:30px">
+        <button value="@carteraId" class="btn btn-sm btn-block btn-warning col-6 mx-auto" id="1" name="Index" onclick='setPageType(this,"@pageName")'>Reporte Detallado</button>
+    </div>
+}
+

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Octopus.Data;
+using Octopus.Helpers;
 using Octopus.Models;
 
 namespace Octopus.Controllers
@@ -19,6 +20,9 @@ namespace Octopus.Controllers
         private readonly ApplicationDbContext _context;
         private readonly SignInManager<User> _SignInManager;
         private readonly UserManager<User> _UserManager;
+        private PaginadorGenerico<CarteraTransaction> _PaginadorTransactions;
+        private readonly int _RegistrosPorPagina = 20;
+
         public CarteraTransactions(ApplicationDbContext context,
             SignInManager<User> SignInManager,
             UserManager<User> UserManager)
@@ -29,30 +33,54 @@ namespace Octopus.Controllers
         }
 
         // GET: CarteraTransactions
-        public async Task<IActionResult> Index(string id = "", bool partial = false)
+        public async Task<IActionResult> Index(string id = "", bool partial = false, string datInit = "", string datEnd = "", int pagina = 1)
         {
-            if (_SignInManager.IsSignedIn(User)) {
-                if (id != "")
+            int _TotalRegistros = 0;
+            IQueryable<CarteraTransaction> recargasQuery;
+            if (_SignInManager.IsSignedIn(User))
+            {
+                DateTime dateInit = datInit == null || datInit == "" ? DateTime.Today : DateTime.Parse(datInit);
+                DateTime dateEnd = datEnd == null || datEnd == "" ? DateTime.Now : DateTime.Parse(datEnd);
+                PaginadorGenerico<CarteraTransaction> recargasPaged;
+                if (id != null)
                 {
-                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var cartera = await _context.Carteras.AsNoTracking().Where(s => s.OwnerId == UserId).FirstOrDefaultAsync();
-                    var applicationDbContext = _context.CarteraTransactions.Include(c => c.Cartera).Where(s => s.CarteraId == cartera.Id);
-                    if(partial)
-                        return PartialView(await applicationDbContext.ToListAsync());
-                    return View(await applicationDbContext.ToListAsync());
-                }
-                else
-                {
-                    var applicationDbContext = _context.CarteraTransactions.Include(c => c.Cartera);
-                    return View(await applicationDbContext.ToListAsync());
+                    if (!id.Equals("0"))
+                    {
+                        ViewBag.carteraId = id;
+
+                        var cartera = await _context.Carteras.AsNoTracking().FirstOrDefaultAsync(s => s.Id == Int64.Parse(id));
+
+                        recargasQuery = _context.CarteraTransactions.Include(c => c.Cartera)
+                            .Where(s => s.CarteraId == cartera.Id && s.FechaOperation >= dateInit && s.FechaOperation <= dateEnd)
+                            .AsNoTracking();
+
+                    }
+                    else
+                    {
+                        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var cartera = await _context.Carteras.AsNoTracking().Where(s => s.OwnerId == userId).FirstOrDefaultAsync();
+                        ViewBag.carteraId = cartera.Id;
+                        var carteraUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.Id == userId);
+                        ViewBag.carteraId = carteraUser.CarteraId;
+
+                        recargasQuery = _context.CarteraTransactions.Include(c => c.Cartera)
+                              .Where(s => s.CarteraId == cartera.Id && s.FechaOperation >= dateInit && s.FechaOperation <= dateEnd)
+                              .AsNoTracking();
+                              
+                    }
+                    recargasPaged = (PaginadorGenerico<CarteraTransaction>)PaginadorGenerico<CarteraTransaction>.Create(recargasQuery, pagina, 0);
+                    if (partial)
+                        return PartialView(recargasPaged);
+                    return View(recargasPaged);
                 }
             }
-            else {
+            else
+            {
                 return NotFound();
             }
-            
-            
-        }
+                return View(); 
+
+            }
 
         // GET: CarteraTransactions/Details/5
         public async Task<IActionResult> Details(int? id)

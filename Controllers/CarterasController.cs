@@ -42,6 +42,10 @@ namespace Octopus.Controllers
                 return NotFound();
             }
 
+            cartera.Venta = await _context.Recargas.Where(s => s.UserId == cartera.OwnerId && s.DateCreated >= DateTime.Today)
+                .Include(s => s.Monto)
+                .SumAsync(s => Double.Parse(s.MontoCant));
+
             return PartialView(cartera);
         }
         public async Task<IActionResult> CrearUnWallet(string userId = "")

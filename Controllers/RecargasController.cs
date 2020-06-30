@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -107,65 +107,67 @@ namespace Octopus.Controllers
             if (_SignInManager.IsSignedIn(User))
             {
                 var userId = _SignInManager.IsSignedIn(User) ? User.FindFirstValue(ClaimTypes.NameIdentifier) : "";
-                DateTime dateInit = datInit == null || datInit == ""? DateTime.Now.AddDays(-1) :DateTime.Parse(datInit);
-                DateTime dateEnd = datEnd == null || datEnd == ""?  DateTime.Now: DateTime.Parse(datEnd);
+                DateTime dateInit = datInit == null || datInit == "" ? DateTime.Today: DateTime.Parse(datInit);
+                DateTime dateEnd = datEnd == null || datEnd == "" ? DateTime.Now : DateTime.Parse(datEnd);
+                IQueryable<Recarga> recargasQuery;
                
-                if (id == null || id == "")
+                if (id != null)
                 {
-                   
-                    // Número total de páginas de la tabla Customers
-                   
-                    var listaRecargas =new List<Recarga>();
-                    if (User.IsInRole("Administrador"))
+                    if (!id.Equals("0"))
                     {
-                        _TotalRegistros = _context.Recargas
-                      .Where(s =>s.DateCreated > dateInit && s.DateCreated < dateEnd).Count();
-                        listaRecargas =
-                        await _context.Recargas
-                        .Where(s =>s.DateCreated > dateInit && s.DateCreated < dateEnd)
-                        .Include(r => r.Carrier).Include(r => r.Monto)
-                        .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking().Skip((pagina - 1) * _RegistrosPorPagina)
-                                                 .Take(_RegistrosPorPagina).OrderBy(s => s.Id).ToListAsync();
-                    }
-                    else {
-                        _TotalRegistros = _context.Recargas
-                      .Where(s => s.UserId == userId && s.DateCreated > dateInit && s.DateCreated < dateEnd).Count();
-                        listaRecargas =
-                       await _context.Recargas
-                       .Where(s => s.UserId == userId && s.DateCreated > dateInit && s.DateCreated < dateEnd)
-                       .Include(r => r.Carrier).Include(r => r.Monto)
-                       .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking().Skip((pagina - 1) * _RegistrosPorPagina)
-                                                .Take(_RegistrosPorPagina).OrderBy(s => s.Id).ToListAsync();
-                    }
-                    var _TotalPaginas = (int)Math.Ceiling((double)_TotalRegistros / _RegistrosPorPagina);
-                    var carteraUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.Id == userId);
-                    ViewBag.cartera = carteraUser.Cartera;
+                        // Número total de páginas de la tabla Customers
+                       
+                        var listaRecargas = new List<Recarga>();
+                        
+                        if (User.IsInRole("Administrador"))
+                        {
+                            recargasQuery = _context.Recargas
+                            .Where(s => s.DateCreated >= dateInit && s.DateCreated <= dateEnd)
+                            .Include(r => r.Carrier).Include(r => r.Monto)
+                            .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking();
 
-                    _PaginadorRecargas = new PaginadorGenerico<Recarga>()
+
+                        }
+                        else
+                        {
+                            recargasQuery = _context.Recargas
+                            .Where(s => s.UserId == userId && s.DateCreated >= dateInit && s.DateCreated <= dateEnd)
+                            .Include(r => r.Carrier).Include(r => r.Monto)
+                            .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking();
+                     
+                        }
+
+                        PaginadorGenerico<Recarga> recargasPaged = (PaginadorGenerico<Recarga>) PaginadorGenerico<Recarga>.Create(recargasQuery, pagina,0);
+
+
+                        ViewBag.total = await recargasQuery.SumAsync(s => s.Monto.MontoCant);
+                        var carteraUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.Id == userId);
+                        ViewBag.carteraId = carteraUser.CarteraId;
+
+                        if (partial)
+                            return PartialView(recargasPaged);
+                        return View(recargasPaged);
+                    }
+                    else
                     {
-                        RegistrosPorPagina = _RegistrosPorPagina,
-                        TotalRegistros = _TotalRegistros,
-                        TotalPaginas = _TotalPaginas,
-                        PaginaActual = pagina,
-                        Resultado = listaRecargas
-                    };
+                         recargasQuery = _context.Recargas
+                         .Where(s => s.UserId == userId && s.DateCreated >= dateInit && s.DateCreated <= dateEnd)
+                         .Include(r => r.Carrier).Include(r => r.Monto)
+                         .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking();
 
-                    if (partial)
-                        return PartialView(_PaginadorRecargas);
-                    return View(_PaginadorRecargas);
+                        PaginadorGenerico<Recarga> recargasPaged = (PaginadorGenerico<Recarga>)PaginadorGenerico<Recarga>.Create(recargasQuery, pagina, 0);
+                        //var _TotalPaginas = (int)Math.Ceiling((double)_TotalRegistros / _RegistrosPorPagina);
+                        var carteraUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.Id == userId);
+                        ViewBag.carteraId = carteraUser.Cartera.Id;
+                        ViewBag.total = await recargasQuery.SumAsync(s => s.Monto.MontoCant);
+                        if (partial)
+                              return PartialView(recargasPaged);
+                        return View();
+                    }
                 }
                 else {
-                   
-                    var applicationDbContext = _context.Recargas.Where(s => s.UserId == userId)
-                        .Include(r => r.Carrier).Include(r => r.Monto)
-                        .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking().OrderByDescending(s => s.Id);
-                    var carteraUser = await _context.User.Include(s => s.Cartera).FirstOrDefaultAsync(s => s.Id == userId);
-                    ViewBag.cartera = carteraUser.Cartera;
-                    if (partial)
-                        return PartialView();
-                    return View(await applicationDbContext.ToListAsync());
+                    return NotFound();
                 }
-                
             }
             else {
                 return RedirectToAction("Index", "Home");
@@ -349,7 +351,9 @@ namespace Octopus.Controllers
                                 recarga.CarrierId = service.CarrierId;
                                recargaResponse = await sendRecargaEvolution(recarga);//recargaResponse = null; to test carrier error
                                 recarga.CarrierId = service.Id;
-                                
+                               
+                               
+
                                 if (recargaResponse != null)
                                 {
                                     if (recargaResponse.ResponseFromCarrier.Contains("Error"))
@@ -360,7 +364,8 @@ namespace Octopus.Controllers
                                     else
                                     {
                                         Console.WriteLine(recargaResponse.ToString());
-
+                                        recarga.CarrierTempName = service.CarrierName + " - " + recarga.ServReference;
+                                        recarga.PhoneNumber = recarga.MontoId;
                                         recarga.StatusId = recargaResponse.StatusId;
                                         recarga.StatusCode = recargaResponse.StatusCode;
                                         carteraTransaction.CarrierResponse = recargaResponse.ResponseFromCarrier;
@@ -590,7 +595,7 @@ namespace Octopus.Controllers
                                             if (lastCartTrans != null)
                                                 canPerformRec = lastCartTrans.FechaOperation < dateDiff;
                                             //validando que aún se pueda realizar la recarga despues de las validaciones
-                                            if (canPerformRec) {
+                                             if (canPerformRec) {
                                                 recarga.CarrierId = service.CarrierId;
                                                 switch (name)
                                                 {
@@ -794,15 +799,15 @@ namespace Octopus.Controllers
             Console.Out.WriteLine("respuesta: " + responseStream);
             if (response.IsSuccessStatusCode && !responseStream.Equals("") && response.StatusCode == HttpStatusCode.OK)
             {
-               
-                    
-                var withOutHeader = betweenStrings(responseStream, "<TAEResult>", "</TAEResult>");
+
+                rec.ResponseFromCarrier = responseStream;
+             var withOutHeader = betweenStrings(responseStream, "<TAEResult>", "</TAEResult>");
                 string newResponse = withOutHeader.Replace("&gt;", "").Replace("&lt;", "");
                 if (responseStream.Contains("error"))
                 {
 
                     var error = betweenStrings(newResponse, "error", "/error");
-                    rec.ResponseFromCarrier = "TAE Error: " +error;
+                    rec.ResponseFromCarrier += "TAE Error: " +error;
                     if (rec.Intent == 0)
                     {
 
