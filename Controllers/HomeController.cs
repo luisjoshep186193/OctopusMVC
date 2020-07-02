@@ -29,7 +29,11 @@ namespace Octopus.Controllers
                 else
                 return RedirectToAction("Create","Recargas");
             } else {
-                return View();
+                // return RedirectToAction("Account/Login","Identity");
+                return RedirectToPage(
+                        "/Account/Login",
+                         null,
+                         new { area = "Identity"});
             }
 
 

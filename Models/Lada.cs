@@ -486,8 +486,8 @@ namespace Octopus.Models
                     new Lada(){LadaName="4888897",RegionId = 6 },
                     new Lada(){LadaName="4888898",RegionId = 6 },
 
-
-
+                    new Lada(){LadaName="221",RegionId = 7 },
+                    new Lada(){LadaName="222",RegionId = 7 },
                     new Lada(){LadaName="223",RegionId = 7 },
                     new Lada(){LadaName="224",RegionId = 7 },
                     new Lada(){LadaName="225",RegionId = 7 },

@@ -9,11 +9,13 @@ namespace Octopus.Models
     public class Log
     {
         public int Id { get; set; }
-        [DisplayName("Monto")]
-        public string LogDesc { get; set; }
-        public int RecargaId  { get; set; }
+        public string Title { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+        public string Type { get; set; }
+        public string Team { get; set; }
+        public string Description { get; set; }
 
-        public Recarga Recarga { get; set; }
-       
+
     }
 }

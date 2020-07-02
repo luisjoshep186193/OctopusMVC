@@ -66,22 +66,32 @@ namespace Octopus.Controllers
             ViewBag.useId = currentUser.Id;
             users.Remove(currentUser);
             users = users.Prepend(currentUser).ToList();
-            foreach (var user in users)
-            {
-             
-                double totalSales = await _context.CarteraTransactions
-                    .Where(s => s.CarteraId == user.CarteraId && s.FechaOperation >= currentDate
-                    && (s.OperacionDesc.Contains("Recarga Exitosa")
-                   || s.OperacionDesc.Contains("Operación Exitosa")))
-                    .SumAsync(s=>s.Monto);
-                double abono = await _context.CarteraTransactions
-                    .Where(s => s.CarteraId == user.CarteraId && s.OperacionDesc.Equals("Abono-Global")
-                    && s.FechaOperation >= currentDate).SumAsync(s => s.Monto);
-                user.Cartera.Asignado = abono;
-                user.Cartera.Venta = totalSales;
-                user.Cartera.Inicial = user.Cartera.SaldoNormal + totalSales - abono;
+           
+                foreach (var user in users)
+                {
 
-            }
+                    double totalSales = await _context.CarteraTransactions
+                        .Where(s => s.CarteraId == user.CarteraId && s.FechaOperation >= currentDate
+                        && (s.OperacionDesc.Contains("Recarga Exitosa")
+                       || s.OperacionDesc.Contains("Operación Exitosa")))
+                        .SumAsync(s => s.Monto);
+                    double abono = await _context.CarteraTransactions
+                        .Where(s => s.CarteraId == user.CarteraId && s.OperacionDesc.Equals("Abono-Global")
+                        && s.FechaOperation >= currentDate).SumAsync(s => s.Monto);
+                   
+                    user.Cartera.Venta = totalSales;
+                    user.Cartera.Inicial = user.Cartera.SaldoNormal + totalSales - abono;
+                if (User.IsInRole("Administrador") && userId == user.Id)
+                {
+                    user.Cartera.Enviado = abono;
+                }
+                else {
+                    user.Cartera.Asignado = abono;
+                }
+
+                }
+            
+           
 
           
             if (partial)
