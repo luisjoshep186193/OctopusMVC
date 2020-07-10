@@ -5,6 +5,8 @@
     var pageName = "Recargas";
     var carteraId = ViewBag.carteraId != null ? ViewBag.carteraId : 0;
     var rowClass = User.IsInRole("Administrador") ?"col-4": "col-8";
+    var userId = UserManager.GetUserId(User);
+
 }
 
 @if (Model.RegistrosPorPagina != 3)
@@ -14,7 +16,7 @@
     </div>
 }
 
-<div class="row">
+<div class="row rowTitle">
     <div class="@rowClass">
         <h7>Operación</h7>
     </div>
@@ -34,6 +36,7 @@
     }
 
 </div>
+
 @foreach (var item in Model.Resultado)
 {
 <div class="row">
@@ -50,7 +53,7 @@
     @if (User.IsInRole("Administrador"))
     {
 <div class="@rowClass">
-    <small>@Html.DisplayFor(modelItem => item.CarrierResponse)</small>
+    <small class="max-lines">@Html.DisplayFor(modelItem => item.CarrierResponse)</small>
 
 </div>
     }
@@ -115,8 +118,10 @@
 
 @if (Model.RegistrosPorPagina == 3)
 {
-    <div class="row" style="max-height:30px">
-        <button value="@carteraId" class="btn btn-sm btn-block btn-warning col-6 mx-auto" id="1" name="Index" onclick='setPageType(this,"@pageName")'>Reporte Detallado</button>
-    </div>
+<div class="row" style="max-height:30px">
+    <button value="@carteraId" class="btn btn-sm btn-primary col-4 mx-auto" id="1" name="Index" onclick='setPageType(this,"@pageName")'>Recargas</button>
+    <button value="@carteraId" class="btn btn-sm  btn-warning col-4 mx-auto" id="1" name="Index" onclick='setPageType(this,"CarteraTransactions")'>Detalles</button>
+    @*<button value="@carteraId" class="btn btn-sm btn-block btn-warning col-6 mx-auto" id="1" name="Index" onclick='setPageType(this,"@pageName")'>Reporte Detallado</button>*@
+</div>
 }
 

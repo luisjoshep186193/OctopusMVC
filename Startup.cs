@@ -65,7 +65,7 @@ namespace Octopus
             services.AddRazorPages();
             services.AddHttpClient("MXTAE", c =>
             {
-                c.BaseAddress = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmm.asmx?op=TAE");
+                c.BaseAddress = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmm.asmx");
                 // Github API versioning
                 c.DefaultRequestHeaders.Add("Accept", "application/soap+xml");
                 c.DefaultRequestHeaders

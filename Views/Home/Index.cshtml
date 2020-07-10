@@ -14,7 +14,7 @@
                         .Include(r => r.Carrier).Include(r => r.Monto)
                         .Include(r => r.WebServDesc).Include(r => r.Status).Include(s => s.User).AsNoTracking()
                         .OrderByDescending(s => s.DateCreated);
-                await Html.RenderPartialAsync("/Views/Recargas/Index.cshtml", PaginadorGenerico<Recarga>.Create(recargasQuery, 0, 10));
+                await Html.RenderPartialAsync("/Views/Recargas/Index.cshtml", PaginadorGenerico<Recarga>.Create(recargasQuery, 0, 0));
             }
         }
         else

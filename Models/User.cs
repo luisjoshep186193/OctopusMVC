@@ -27,6 +27,7 @@ namespace Octopus.Models
         [RegularExpression(@"^[0-9-]*$", ErrorMessage = "Asigna una Comisión entre 1 y 7")]
         public double ComisionTAE { get; set; }
         public string Rol { get; set; }
+        public string PasswordToken { get; set; }
         public Cartera Cartera { get; set; }
     }
 }

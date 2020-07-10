@@ -16,43 +16,43 @@
         <form asp-action="Edit">
             <input type="hidden" asp-for="CreatedBy" class="form-control" />
             <input type="hidden" asp-for="NormalizedEmail" class="form-control" />
-            <input type="hidden" asp-for="PasswordHash" class="form-control" />
+
             <input type="hidden" asp-for="CarteraId" class="form-control" />
             <input type="hidden" asp-for="SecurityStamp" class="form-control" />
             <input type="hidden" asp-for="ConcurrencyStamp" class="form-control" />
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="UserName" class="form-control" />
             <input type="hidden" asp-for="NormalizedUserName" class="form-control" />
-            <input hidden class="form-check-input" asp-for="TwoFactorEnabled" /> 
+            <input hidden class="form-check-input" asp-for="TwoFactorEnabled" />
             <input hidden class="form-check-input" asp-for="PhoneNumberConfirmed" />
-            <input hidden class="form-check-input" asp-for="EmailConfirmed" /> 
+            <input hidden class="form-check-input" asp-for="EmailConfirmed" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @if (isAdmin)
-            {
-                <div class="container form-inline mt-10 mb-10" style="background-color:aqua; border-radius:10px;">
-                    <h6 class="col-12">Roles Asignados:</h6>
-                    <hr />
-                    @foreach (string rol in ViewBag.rolesUser)
-                    {
-                        <div style="margin-left:10px;" id="div-@rol" class="form-group">
-                            <label class="form-control">@rol</label>
-                            <button style="margin-left:10px;" name="@userId" id="deleteRol" type="button" onclick="showModal(this);" value="@rol" class="btn btn-sm btn-danger">X</button>
-                        </div>
-
-                    }
-                </div>
+            @*if (isAdmin)
+        {
+            <div class="container form-inline mt-10 mb-10" style="background-color:aqua; border-radius:10px;">
+                <h6 class="col-12">Roles Asignados:</h6>
                 <hr />
-                <div class="form-group">
-                    <label asp-for="Rol" class="control-label"></label>
-                    <select asp-for="Rol" class="form-control" asp-items="ViewBag.Rol"></select>
-                </div>
+                @foreach (string rol in ViewBag.rolesUser)
+                {
+                    <div style="margin-left:10px;" id="div-@rol" class="form-group">
+                        <label class="form-control">@rol</label>
+                        <button style="margin-left:10px;" name="@userId" id="deleteRol" type="button" onclick="showModal(this);" value="@rol" class="btn btn-sm btn-danger">X</button>
+                    </div>
 
-            }
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
+                }
             </div>
+            <hr />
+            <div class="form-group">
+                <label asp-for="Rol" class="control-label"></label>
+                <select asp-for="Rol" class="form-control" asp-items="ViewBag.Rol"></select>
+            </div>
+
+        }
+        <div class="form-group">
+            <label asp-for="Nombre" class="control-label"></label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>*@
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
@@ -62,6 +62,12 @@
                 <label asp-for="PhoneNumber" class="control-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div>
+                <label class="control-label">Password</label>
+                <input asp-for="PasswordHash" value="" class="form-control" />
+                <input hidden asp-for="PasswordToken" class="form-control" />
+                <span asp-validation-for="PasswordHash" class="text-danger"></span>
             </div>
             <div hidden class="form-group">
                 <label asp-for="LockoutEnd" class="control-label"></label>

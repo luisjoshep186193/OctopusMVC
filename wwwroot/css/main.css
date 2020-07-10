@@ -13,7 +13,19 @@ height:100%;
     padding-bottom: 10rem;
     background-color: white !important;
 }
-
+.rowTitle {
+    background-color: slategray;
+    border-radius:5px;
+    color:yellow;
+}
+.max-lines {
+    display: block; /* or inline-block */
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-height: 3.6em;
+    line-height: 1.8em;
+}
 .lead span {
     color: orange;
     font-weight: bold;

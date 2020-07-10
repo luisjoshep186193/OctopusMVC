@@ -53,13 +53,13 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Montoes" asp-action="Index">Montos</a>
                                 </li>
-                                <li class="nav-item">
+                                <li hidden class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="UsuarioGrupos" asp-action="Index">Grupos</a>
                                 </li>
-                                <li class="nav-item">
+                                <li hidden class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Productos" asp-action="Index">Productos</a>
                                 </li>
-                                <li class="nav-item">
+                                <li hidden class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Images" asp-action="Index">Images</a>
                                 </li>
                             }
@@ -104,25 +104,28 @@
                     </div>
                 </div>
             </nav>*@
-            <nav class="navbar navbar-light box-shadow" style="background-color:inherit">
-                <a id="errorLbl" class="text-danger col-12"></a>
-                <div class="main form-inline col-12" style="margin-top:10px;margin-bottom:10px;background-color:purple;border-radius:20px">
+    <nav class="navbar navbar-light box-shadow" style="background-color:inherit">
+        <a id="errorLbl" class="text-danger col-12"></a>
+        <a class="btn d-lg-none d-sm-none d-md-none btn-warning col-8 col-md-4 mx-auto btn-block" data-toggle="collapse" href="#userInfo" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Saldos
+        </a>
+        <div class="main collapse show fade form-inline col-12" id="userInfo" style="margin-top:10px;margin-bottom:10px;background-color:purple;border-radius:20px">
 
-                    <div id="walletDetail" class="container col-sm-12 col-md-6" style="color:white;height:100%">
-                        <h6 class="text-center">Mi Cartera</h6>
+            <div id="walletDetail" class="container col-sm-12 col-md-6 mt-3 mb-3" style="color:white;height:100%">
+                <h6 class="text-center">Mi Cartera</h6>
 
-                        @{
-                            await Html.RenderPartialAsync("/Views/Carteras/Details.cshtml", cartera);
-                        }
-                    </div>
-                    <div id="lastMovements" class="container col-sm-12 col-md-6" style="color:white;height:100%">
-                        <h6 class="text-center">Últimos movimientos</h6>
-                        @{
-                            await Html.RenderPartialAsync("/Views/CarteraTransactions/Index.cshtml", PaginadorGenerico<CarteraTransaction>.Create(recargasQuery, 0, 3));
-                        }
-                    </div>
-                </div>
-            </nav>
+                @{
+                    await Html.RenderPartialAsync("/Views/Carteras/Details.cshtml", cartera);
+                }
+            </div>
+            <div id="lastMovements" class="container col-sm-12 col-md-6 mt-3" style="color:white;height:100%">
+                <h6 class="text-center">Últimos movimientos</h6>
+                @{
+                    await Html.RenderPartialAsync("/Views/CarteraTransactions/Index.cshtml", PaginadorGenerico<CarteraTransaction>.Create(recargasQuery, 0, 3));
+                }
+            </div>
+        </div>
+    </nav>
 
         }
     </header>
@@ -247,9 +250,9 @@
                         text: "Elige fecha inicial y final",
                         icon: 'warning',
                         html:
-                            '<a>Fecha Inicio</b> ' +
-                            '<input id="DateStart" type="datetime-local" min="@DateTime.Now.AddYears(-1).ToString("s")" max="@DateTime.Now.AddHours(-1).ToString("s")" onchange="calculateDate(this)" value="@DateTime.Today.ToString("s")" class="form-control" /> ' +
-                            '<a>Fecha Termino</b> ' +
+                            '<a>Fecha Inicio</a> ' +
+                            '<input id="DateStart" type="datetime-local" min="@DateTime.Now.AddYears(-1).ToString("s")" max="@DateTime.Now.ToString("s")" onchange="calculateDate(this)" value="@DateTime.Today.ToString("s")" class="form-control" /> ' +
+                            '<a>Fecha Termino</a> ' +
                             '<input id="DateEnd" type="datetime-local" min="@DateTime.Now.AddYears(-1).ToString("s")" max="@DateTime.Now.ToString("s")" onchange="calculateDate(this)" value="@DateTime.Now.ToString("s")" class="form-control" /> ',
 
                         showCancelButton: true,
@@ -300,6 +303,57 @@
                     break;
             }
 
+
+        }
+        function calculateDate(val) {
+            var value = val.value;
+            // var name = document.getElementById("precioHora").value;
+            var id = val.id;
+            //alert(value);
+            var entryDate = new Date(value);
+            var currentDate = new Date();
+            if (entryDate < currentDate) {
+                var dateStart = document.getElementById("DateStart").value;
+                var dateEnd = document.getElementById("DateEnd").value;
+                const date1 = new Date(dateStart);
+                const date2 = new Date(dateEnd);
+                if (dateStart < dateEnd) {
+
+                    const diffTime = Math.abs(date2 - date1);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+                    const diffMins = Math.ceil(diffTime / (1000 * 60));
+                   // console.log(diffTime + " milliseconds");
+                    //console.log(diffDays + " days");
+
+                    //  document.getElementById("totalCant").value = +name * +diffHours;
+                    if (id == "DateStart") {
+                        document.getElementById("dateInit").value = value;
+                    } else {
+                        document.getElementById("dateEnd").value = value;
+                    }
+                    //alert(document.getElementById("dateInit").value + " " + document.getElementById("dateEnd").value);
+
+                } else {
+                    if (id == "DateStart") {
+                        document.getElementById("DateEnd").value = value;
+                        document.getElementById("dateEnd").value = value;
+                    } else {
+                        document.getElementById("DateStart").value = value;
+                        document.getElementById("dateInit").value = value;
+                    }
+                    //alert("Fecha de fin debe ser menor que fecha actual");
+                    //document.getElementById("horasRes").value = 1;
+                    //  document.getElementById("totalCant").value = name;
+                }
+            } else {
+                //  document.getElementById("errorFormLbl").innerHTML = "La fecha ingresada debe ser mayor a la actual. "
+
+                val.value = value;
+                //document.getElementById("horasRes").value = 1;
+                // document.getElementById("totalCant").value = name;
+            }
+            // document.getElementById("lugaresSelect").value = 1;
 
         }
         function showDetailsModal(type, url, data, hideModal, redirect = true, processData = true, contentType = true) {

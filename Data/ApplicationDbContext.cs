@@ -60,7 +60,10 @@ namespace Octopus.Data
             modelBuilder.Entity<Image>().Ignore(p => p.File);
             modelBuilder.Entity<Recarga>().Ignore(p => p.ServReference);
             modelBuilder.Entity<Recarga>().Ignore(p => p.ServReferenceConf);
+            modelBuilder.Entity<User>().Ignore(p => p.PasswordToken);
             
+
+
             base.OnModelCreating(modelBuilder);
         }
 

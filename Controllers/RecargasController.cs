@@ -32,22 +32,22 @@ namespace Octopus.Controllers
         private RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<User> _UserManager;
         private readonly IHttpClientFactory _clientFactory;
-      /*  private readonly string sendRecarga = "<?xml version='1.0' encoding='utf-8'?>"+
+       private readonly string sendRecarga = "<?xml version='1.0' encoding='utf-8'?>"+
             " <soap12:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'"+
             " xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap12='http://www.w3.org/2003/05/soap-envelope'>"+
-            "<soap12:Body><TAE xmlns='DMM'><usuario>meximedia0@gmail.com</usuario><password>789456</password>"+
-            "<producto>telcel</producto><telefono>7751299313</telefono><monto>20</monto><puntov></puntov></TAE>"+
-            "</soap12:Body>;</soap12:Envelope>";*/
+            "<soap12:Body><TAE xmlns='DMM'><usuario>meximedia0@gmail.com</usuario><password>789456</password>" +
+            "<producto>telcel</producto><telefono>7751865493</telefono><monto>20</monto><puntov></puntov></TAE>"+
+            "</soap12:Body></soap12:Envelope>";
         private readonly string getProducts = "<?xml version='1.0' encoding='utf-8'?>" +
             " <soap12:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'" +
             " xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap12='http://www.w3.org/2003/05/soap-envelope'>" +
-            "<soap12:Body><ObtenProductosTAE xmlns='DMM'><usuario>meximedia0@gmail.com</usuario><password>789456</password></ObtenProductosTAE>" +
-            "</soap12:Body>;</soap12:Envelope>";
+            "<soap12:Body><ObtenProductosTAE xmlns='DMM'><usuario>bhernandez@gruposyscom.com</usuario><password>789456</password></ObtenProductosTAE>" +
+            "</soap12:Body></soap12:Envelope>";
         private string headerTAE = "<?xml version='1.0' encoding='utf-8'?>" +
             " <soap12:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'" +
             " xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap12='http://www.w3.org/2003/05/soap-envelope'>" +
             "<soap12:Body><TAE xmlns='DMM'><usuario>USR</usuario><password>PWD</password>";
-        private readonly string footerTAE = "</soap12:Body>;</soap12:Envelope>";
+        private readonly string footerTAE = "</soap12:Body></soap12:Envelope>";
 
         private readonly string sendSecond = "Request_Transaction?jrquest={'User':'7972661217','Password':'Lunes1$','Carrier':'01'," +
             "'Price':'50','Number':'5555555555','Folio_POS':'1000803112700'}";
@@ -55,7 +55,7 @@ namespace Octopus.Controllers
         private readonly string evolutionFooter = "','Folio_POS':'1000803112700'}";
         private PaginadorGenerico<Recarga> _PaginadorRecargas;
         private readonly int _RegistrosPorPagina = 20;
-        Uri uri = new Uri("http://www.itmultiwebservice.net/wsdmm_p/fdmm.asmx?op=TAE");
+        Uri uri = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmmpaq.asmx");
 
 
         public RecargasController(SignInManager<User> SignInManager,
@@ -98,12 +98,9 @@ namespace Octopus.Controllers
         // GET: Recargas
         public async Task<IActionResult> Index(string id = "", bool partial = false, string datInit="", string datEnd="", int pagina = 1)
         {
-            int _TotalRegistros = 0;
-            ViewBag.id = id;
-            ViewBag.partial = partial;
-            ViewBag.datInit = datInit;
-            ViewBag.datEnd = datEnd;
-            //Console.WriteLine(await getProductosTAE(getProducts));
+            //ViewBag.send = sendRecarga;
+            //ViewBag.carrier = await getProductosTAE(sendRecarga);
+         
             if (_SignInManager.IsSignedIn(User))
             {
                 var userId = _SignInManager.IsSignedIn(User) ? User.FindFirstValue(ClaimTypes.NameIdentifier) : "";
@@ -507,8 +504,8 @@ namespace Octopus.Controllers
                                     if (webServReg.Count() > 0)
                                     {//----lista de webservers asignados a la region 
                                         var webServUrl = webServReg[0].WebService.WebServDesc.URL;
-                                        var name = webServReg[0].WebService.WebServDesc.WebServiceName;
-                                        //choose the webserver to send
+                                        var name = service.Id == 3 || service.Id == 4 ? "VENTA MÓVIL" :  webServReg[0].WebService.WebServDesc.WebServiceName;
+                                        //choose the webserver to sen
                                         Console.WriteLine("Sending recarga to: " + webServUrl);
                                        
                                       
@@ -517,7 +514,11 @@ namespace Octopus.Controllers
                                         {
                                             var desc = webServReg[0].WebService.WebServDesc.WebServiceName;
                                             recarga.WSTempName = desc;
-                                            recarga.WSTempName = desc == "MX TAE WebService" ? "Evolution" : "TAE";
+                                            
+                                                recarga.WSTempName = desc == "MX TAE WebService" ? "Evolution" : "TAE";
+                                            
+                                           
+                                            
                                             recarga.Intent = 0;
                                         }
                                         else {
@@ -602,7 +603,7 @@ namespace Octopus.Controllers
 
                                                     case "MX TAE WebService":
                                                         if (webServReg[0].RegionId == 9)
-                                                            headerTAE = headerTAE.Replace("USR", "bhernandez@gmail.com").Replace("PWD", "789456");
+                                                            headerTAE = headerTAE.Replace("USR", "bhernandez@gruposyscom.com").Replace("PWD", "789456");
                                                         else
                                                             headerTAE = headerTAE.Replace("USR", "meximedia0@gmail.com").Replace("PWD", "789456");
 
@@ -746,10 +747,12 @@ namespace Octopus.Controllers
             ViewBag.bolerr = isAnErr;
             return View(recarga);
         }
+
         private async Task<String> getProductosTAE(string req)
         {
             Recarga recarga = new Recarga();
-            uri = new Uri("http://www.itmultiwebservice.net/wsdmm_p/fdmm.asmx?op=ObtenProductosTAE");
+            //uri = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmm.asmx");
+            uri = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmm.asmx");
             recarga.StatusId = 1;
 
 
@@ -759,7 +762,7 @@ namespace Octopus.Controllers
 
 
             request.Content = new StringContent(req,
-                                          Encoding.UTF8,
+                                          Encoding.UTF32,
                                           "application/soap+xml");
             var response = await client.SendAsync(request);
             string responseStream = await response.Content.ReadAsStringAsync();
@@ -775,16 +778,25 @@ namespace Octopus.Controllers
          private async Task<Recarga> sendRecargaTAE(Recarga rec)
         //private Recarga sendRecargaTAE(Recarga rec)
         {
-
+              if (rec.CarrierId == 9 || rec.CarrierId == 10 || rec.CarrierId == 13 || rec.CarrierId == 14)
+              {
+                  uri = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmmpaq.asmx");
+              }
+              else {
+                  uri = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmm.asmx");
+              }
+            //uri = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmm.asmx");
             var cuerpo = "<producto>" + rec.CarrierTempName + "</producto>" +
                                                     "<telefono>" + rec.PhoneNumber + "</telefono><monto>" + rec.MontoCant +
-                                                    "</monto><puntov></puntov></TAE>','Folio_POS':'1000803112700'}";
+                                                    "</monto><puntov></puntov></TAE>";
 
                 var req = headerTAE + cuerpo + footerTAE;
+            //var req1 = sendRecarga;
+
             rec.RecargaReq = req;
 
            // Recarga recarga = new Recarga();
-            uri = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmm.asmx?op=TAE");
+            
             rec.StatusId = 1;
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
             var client = _clientFactory.CreateClient("MXTAE");
@@ -850,14 +862,18 @@ namespace Octopus.Controllers
                 return rec;
             }
             else {
-                rec.ResponseFromCarrier += responseStream;
+                var withOutHeader = betweenStrings(responseStream, "<TAEResult>", "</TAEResult>");
+                string newResponse = withOutHeader.Replace("&gt;", "").Replace("&lt;", "");
+                var error = betweenStrings(newResponse, "error", "/error");
+                rec.ResponseFromCarrier += "TAE Error: " + error;
+                //rec.ResponseFromCarrier += responseStream;
                 if (rec.Intent == 0)
                 {
 
                     rec.Intent += 1;
                     if (rec.WSTempName != "TAE")
                         return await sendRecargaEvolution(rec);
-
+                  
                 }
                 
                     return null;

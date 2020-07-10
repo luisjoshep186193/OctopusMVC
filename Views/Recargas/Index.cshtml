@@ -8,12 +8,18 @@
 
 @if (!User.IsInRole("Administrador"))
 {
+
     <div class="row" style="max-height:30px">
         <button value="@carteraId" class="btn btn-sm btn-block btn-warning col-6 mx-auto" id="1" name="Index" onclick="newSearch(this,1)">Nueva búsqueda</button>
     </div>
 }
+@*else
+    {
+        <p>@ViewBag.send</p>
+        <p>@ViewBag.carrier</p>
+    }*@
 <h6>Total: <small>@ViewBag.total</small></h6>
-<table class="table table-dark table-striped">
+<table class="table table-responsive table-bordered table-dark table-striped">
     <thead class="thead-dark">
         <tr>
             <th>

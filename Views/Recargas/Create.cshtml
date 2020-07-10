@@ -28,14 +28,6 @@
                             <label asp-for="CarrierId" class="control-label"></label>
                             <select id="selectCarrier" asp-for="CarrierId" class="form-control" asp-items="ViewBag.CarrierId"></select>
                         </div>
-                        <div id="selectMontoDiv" class="form-group">
-                            <label asp-for="MontoId" class="control-label"></label>
-                            <select id="selectMonto" asp-for="MontoId" class="form-control" asp-items="ViewBag.MontoId"></select>
-                        </div>
-                        <div id="insertMontoDiv" hidden class="form-group">
-                            <label class="control-label">Cantidad a Enviar</label>
-                            <input id="insertMonto" asp-for="MontoId" class="form-control" type="number" />
-                        </div>
                         <div id="phoneDiv">
                             <div class="form-group">
                                 <label asp-for="PhoneNumber" class="control-label"></label>
@@ -48,6 +40,15 @@
                                 <span asp-validation-for="ConfirmPhone" class="text-danger"></span>
                             </div>
                         </div>
+                        <div id="selectMontoDiv" class="form-group">
+                            <label asp-for="MontoId" class="control-label"></label>
+                            <select id="selectMonto" asp-for="MontoId" class="form-control" asp-items="ViewBag.MontoId"></select>
+                        </div>
+                        <div id="insertMontoDiv" hidden class="form-group">
+                            <label class="control-label">Cantidad a Enviar</label>
+                            <input id="insertMonto" asp-for="MontoId" class="form-control" type="number" />
+                        </div>
+
                         <div hidden id="servicesDiv">
                             <div class="form-group">
                                 <label asp-for="ServReference" class="control-label"></label>

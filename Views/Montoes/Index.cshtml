@@ -7,7 +7,8 @@
 <h3>@ViewBag.Title</h3>
 <input hidden id="pageType" name="Montoes" />
 <p>
-    <a class="btn btn-primary btn-block mx-auto" id="" name="Create" onclick="showModal(this)">Agregar Monto</a>
+    <button value="Montoes" class="btn btn-md btn-block btn-success col-8 mx-auto" onclick="showModal(this)" name="Create">Agregar Monto</button>
+    
 </p>
 <div class="jumbotron">
 
@@ -35,8 +36,8 @@
                         $@Html.DisplayFor(modelItem => item.MontoCant).00
                     </td>
                     <td>
-                        <a class="btn btn-outline-warning" onclick="showModal(this)" name="Edit" id="@item.Id" >Editar</a> |
-                        <a class="btn btn-outline-danger" onclick="showModal(this)" id="@item.Id" name="Delete">Eliminar</a>
+                        <button value="Montoes" class="btn btn-outline-warning" onclick="showModal(this)" name="Edit" id="@item.Id" >Editar</button> |
+                        <button value="Montoes" class="btn btn-outline-danger" onclick="showModal(this)" id="@item.Id" name="Delete">Eliminar</button>
                     </td>
                 </tr>
             }

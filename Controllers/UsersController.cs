@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Octopus.Data;
 using Octopus.Models;
@@ -171,7 +173,9 @@ namespace Octopus.Controllers
 
             }
 
-            if(partial)
+            user.PasswordToken = await _UserManager.GeneratePasswordResetTokenAsync(user);
+
+            if (partial)
              return PartialView(user);
 
             return View(user);
@@ -182,24 +186,37 @@ namespace Octopus.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Nombre,CreatedBy,Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,CarteraId,Rol")] User user)
+        public async Task<IActionResult> Edit(string id, [Bind("Nombre,CreatedBy,Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,CarteraId,Rol,PasswordToken")] User currentUser)
         {
-            if (id != user.Id)
+            if (id != currentUser.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var user = _context.User.Find(id);
+                if (currentUser.PasswordHash != null)
+                {
+                    if (currentUser.PasswordHash != "")
+                    {
+                        var result = await _UserManager.ResetPasswordAsync(user, currentUser.PasswordToken, currentUser.PasswordHash);
+                    
+                    }
+
+                }
+                
                 try
                 {
+                    user.PhoneNumber = currentUser.PhoneNumber;
+                    user.Email = currentUser.Email;
                    
                     _context.Update(user);
                     await _context.SaveChangesAsync();
-                    if (user.Rol != "")
+                    if (currentUser.Rol != null)
                     {
-                        var isInRole =  await _UserManager.IsInRoleAsync(user, user.Rol);
-                        var role = await _roleManager.FindByIdAsync(user.Rol);
+                        var isInRole =  await _UserManager.IsInRoleAsync(user, currentUser.Rol);
+                        var role = await _roleManager.FindByIdAsync(currentUser.Rol);
                         _ = isInRole == true && role != null ? null : await _UserManager.AddToRoleAsync(
                         user, role.Name);
                         //List<string> userRoles = await _UserManager.GetRolesAsync(user) as List<string>;
@@ -212,7 +229,7 @@ namespace Octopus.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
+                    if (!UserExists(currentUser.Id))
                     {
                         return NotFound();
                     }
@@ -221,11 +238,12 @@ namespace Octopus.Controllers
                         throw;
                     }
                 }
+               
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.rolesUser = await _UserManager.GetRolesAsync(user) as List<string>;
+            ViewBag.rolesUser = await _UserManager.GetRolesAsync(currentUser) as List<string>;
             ViewData["Rol"] = new SelectList(_context.Roles.AsNoTracking(), "Id", "Name");
-            return View(user);
+            return View(currentUser);
         }
 
         public async Task<User> getCurrentUser() {
