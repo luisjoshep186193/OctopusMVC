@@ -400,9 +400,6 @@ namespace Octopus.Controllers
                             //Retornando saldos
                             if (carteraTransactionId == 2)
                             {
-
-                             
-
                                 //actualizando saldos master
                                 //Actualizando saldos master
                                 masterUser.Cartera.SaldoNormal -= montoServicio;
@@ -496,7 +493,7 @@ namespace Octopus.Controllers
                             var ladaSubstr = recarga.PhoneNumber.ToString().Substring(0, 1);
                             var lada = new Lada();
                             var regionId = recarga.CarrierId;
-                            if (recarga.CarrierId == 1)
+                            if (recarga.CarrierId == 1 || recarga.CarrierId == 9 || recarga.CarrierId == 10)
                             {
                                  
                                 if (ladaSubstr == "4" || ladaSubstr == "7" || ladaSubstr == "8" || ladaSubstr == "9")
@@ -533,7 +530,7 @@ namespace Octopus.Controllers
                                     {//----lista de webservers asignados a la region 
                                         var webServUrl = webServReg[0].WebService.WebServDesc.URL;
                                         var name = webServReg[0].WebService.WebServDesc.WebServiceName;
-                                        if (carrier.Id == 3 || carrier.Id == 4 || carrier.Id == 10)//unefon o iusacell
+                                        if (carrier.Id == 3 || carrier.Id == 4 || carrier.Id == 11)//unefon o iusacell
                                         {
                                             //name = "VENTA MÓVIL";
                                             headerTAE = headerTAE.Replace("USR", "ornelasocadiz@gruposyscom.com").Replace("PWD", "789456");
@@ -847,93 +844,94 @@ namespace Octopus.Controllers
             request.Content = new StringContent(rec.RecargaReq,
                                           Encoding.UTF8,
                                           "application/soap+xml");
-            var response = await client.SendAsync(request);
-            string responseStream = await response.Content.ReadAsStringAsync();
-            responseStream = responseStream == null ? "":responseStream ;
-            Console.Out.WriteLine("respuesta: " + responseStream);
-            //rec.ResponseFromCarrier = "send: "+ req + " to: "+uri+" resp: "+responseStream;
-           // return rec;
-            if (response.IsSuccessStatusCode && !responseStream.Equals("") && response.StatusCode == HttpStatusCode.OK)
-            {
+                  var response = await client.SendAsync(request);
+                   string responseStream = await response.Content.ReadAsStringAsync();
+                   responseStream = responseStream == null ? "":responseStream ;
+                   Console.Out.WriteLine("respuesta: " + responseStream);
+                   //rec.ResponseFromCarrier = "send: "+ req + " to: "+uri+" resp: "+responseStream;
+                   //return rec;
+                   if (response.IsSuccessStatusCode && !responseStream.Equals("") && response.StatusCode == HttpStatusCode.OK)
+                   {
 
-                rec.ResponseFromCarrier = responseStream;
-             var withOutHeader = rec.Carrier.Id == 9 || rec.Carrier.Id == 10 ?
-                    betweenStrings(responseStream, "<TAESERVICIOSResult>", "</TAESERVICIOSResult>") : betweenStrings(responseStream, "<TAEResult>", "</TAEResult>");
-               string newResponse = withOutHeader.Replace("&gt;", "").Replace("&lt;", "");
-                if (responseStream.Contains("error"))
-                {
+                       rec.ResponseFromCarrier = responseStream;
+                    var withOutHeader = rec.Carrier.Id == 9 || rec.Carrier.Id == 10 ?
+                           betweenStrings(responseStream, "<TAESERVICIOSResult>", "</TAESERVICIOSResult>") : betweenStrings(responseStream, "<TAEResult>", "</TAEResult>");
+                      string newResponse = withOutHeader.Replace("&gt;", "").Replace("&lt;", "");
+                       if (responseStream.Contains("error"))
+                       {
 
-                    var error = betweenStrings(newResponse, "error", "/error");
-                    rec.ResponseFromCarrier += "TAE Error: " +error;
-                    if (rec.Intent == 0)
-                    {
+                           var error = betweenStrings(newResponse, "error", "/error");
+                           rec.ResponseFromCarrier += "TAE Error: " +error;
+                           if (rec.Intent == 0)
+                           {
 
-                        rec.Intent += 1;
-                        if (rec.WSTempName != "TAE")
-                            return await sendRecargaEvolution(rec);
+                               rec.Intent += 1;
+                               if (rec.WSTempName != "TAE")
+                                   return await sendRecargaEvolution(rec);
 
-                    }
-                    return rec;
+                           }
+                           return rec;
 
-                }
-                try
-                {
-                    var usuario = betweenStrings(newResponse, "Usuario", "/Usuario");
-                    var producto = betweenStrings(newResponse, "Producto", "/Producto");
-                    var monto = betweenStrings(newResponse, "Monto", "/Monto");
-                    var telefono = betweenStrings(newResponse, "Telefono", "/Telefono");
-                    var estado = betweenStrings(newResponse, "estado", "/estado");
-                    var folio = betweenStrings(newResponse, "Folio", "/Folio");
+                       }
+                       try
+                       {
+                           var usuario = betweenStrings(newResponse, "Usuario", "/Usuario");
+                           var producto = betweenStrings(newResponse, "Producto", "/Producto");
+                           var monto = betweenStrings(newResponse, "Monto", "/Monto");
+                           var telefono = betweenStrings(newResponse, "Telefono", "/Telefono");
+                           var estado = betweenStrings(newResponse, "estado", "/estado");
+                           var folio = betweenStrings(newResponse, "Folio", "/Folio");
 
-                    var transaction = betweenStrings(responseStream, "Transaccion&gt;", "&lt;/");
-                    rec.ResponseFromCarrier = "Usuario: " + usuario +
-                    " Producto: " + producto + " Monto: " + monto + " Telefono: "
-                    + telefono + " Estado: " + estado + " Transaction: " + transaction;
-                    rec.StatusCode = folio;
-                }
-                catch (Exception e) {
-                    //var folio = betweenStrings(newResponse, "Folio", "/Folio");
-                    rec.ResponseFromCarrier = e.ToString() +" ---- "+ newResponse;
-                    rec.StatusCode = "0000";
-                }
-                
+                           var transaction = betweenStrings(responseStream, "Transaccion&gt;", "&lt;/");
+                           rec.ResponseFromCarrier = "Usuario: " + usuario +
+                           " Producto: " + producto + " Monto: " + monto + " Telefono: "
+                           + telefono + " Estado: " + estado + " Transaction: " + transaction;
+                           rec.StatusCode = folio;
+                       }
+                       catch (Exception e) {
+                           //var folio = betweenStrings(newResponse, "Folio", "/Folio");
+                           rec.ResponseFromCarrier = e.ToString() +" ---- "+ newResponse;
+                           rec.StatusCode = "0000";
+                       }
 
-                //recarga.PhoneNumber = telefono;
-                rec.StatusId = 4;
-                
-                rec.Ok = true;
-                
-                rec.WebServDescId = 1;
-                return rec;
-            }
-            else {
-                if (responseStream.Contains("DOCTYPE"))
-                {
-                    rec.ResponseFromCarrier += "TAE Error: Unauthorized";
 
-                }
-                else {
-                    var withOutHeader = betweenStrings(responseStream, "<TAEResult>", "</TAEResult>");
-                    string newResponse = withOutHeader.Replace("&gt;", "").Replace("&lt;", "");
-                    var error = betweenStrings(newResponse, "error", "/error");
-                    rec.ResponseFromCarrier += "TAE Error: " + error;
-                }
-               
-                //rec.ResponseFromCarrier += responseStream;
-                if (rec.Intent == 0)
-                {
+                       //recarga.PhoneNumber = telefono;
+                       rec.StatusId = 4;
 
-                    rec.Intent += 1;
-                    if (rec.WSTempName != "TAE")
-                        return await sendRecargaEvolution(rec);
-                  
-                }
-                
-                    return null;
-                
-                
-            }
-           // return null;
+                       rec.Ok = true;
+
+                       rec.WebServDescId = 1;
+                       return rec;
+                   }
+                   else {
+                       if (responseStream.Contains("DOCTYPE"))
+                       {
+                           rec.ResponseFromCarrier += "TAE Error: Unauthorized";
+
+                       }
+                       else {
+                           var withOutHeader = betweenStrings(responseStream, "<TAEResult>", "</TAEResult>");
+                           string newResponse = withOutHeader.Replace("&gt;", "").Replace("&lt;", "");
+                           var error = betweenStrings(newResponse, "error", "/error");
+                           rec.ResponseFromCarrier += "TAE Error: " + error;
+                       }
+
+                       //rec.ResponseFromCarrier += responseStream;
+                       if (rec.Intent == 0)
+                       {
+
+                           rec.Intent += 1;
+                           if (rec.WSTempName != "TAE")
+                               return await sendRecargaEvolution(rec);
+
+                       }
+
+                           return null;
+
+
+                   }
+           // return await sendRecargaEvolution(rec);
+            // return null;
         }
 
 
@@ -946,8 +944,8 @@ namespace Octopus.Controllers
              else {
                  referencia = rec.PhoneNumber.ToString();
              }
-             var carrierId = rec.Carrier.Id < 10 ? "0" + rec.Carrier.Id : rec.Carrier.Id.ToString();
-             var cuerpo = carrierId + "','Price':'" + rec.MontoCant + "','Number':'"
+             var carrierId = rec.Carrier.CarrierId < 10 ? "0" + rec.Carrier.CarrierId : rec.Carrier.CarrierId.ToString();
+             var cuerpo = carrierId + "','Price':'" + rec.Monto.MontoCant + "','Number':'"
                                                      + referencia;
              var req = evolutionHeader + cuerpo + evolutionFooter;
              rec.RecargaReq = req;
@@ -977,7 +975,7 @@ namespace Octopus.Controllers
                  if (responseStream.Contains("000000"))
                  {
                      var error = betweenStrings(replaced, "Description:", ",");
-                     rec.ResponseFromCarrier ="Ev Error - "+ error;
+                     rec.ResponseFromCarrier +="Ev Error - "+ error;
                      if (rec.Intent == 0)
                      {
                          rec.Intent += 1;
