@@ -14,6 +14,7 @@ namespace Octopus.Models
         public int MontoCant { get; set; }
         [DisplayName("Compañía")]
         public int CarrierId { get; set; }
+        public int TAECode { get; set; }
 
         public Carrier Carrier { get; set; }
         public string MontoDesc

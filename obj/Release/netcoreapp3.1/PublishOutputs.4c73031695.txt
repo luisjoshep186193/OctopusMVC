@@ -17,7 +17,6 @@
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/imgbck.jpg
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/movi.jpg
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/moviliario.jpg
-/Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/octopuslogo.png
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/office.jpg
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/recarga.jpg
 /Users/flex/Documents/OctopusMVC-master/Octopus/obj/Release/netcoreapp3.1/PubTmp/Out/wwwroot/images/salapers.jpg

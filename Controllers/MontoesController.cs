@@ -57,7 +57,7 @@ namespace Octopus.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MontoCant,CarrierId")] Monto monto)
+        public async Task<IActionResult> Create([Bind("Id,MontoCant,CarrierId,TAECode")] Monto monto)
         {
             if (ModelState.IsValid)
             {
@@ -93,7 +93,7 @@ namespace Octopus.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MontoCant,CarrierId")] Monto monto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MontoCant,CarrierId,TAECode")] Monto monto)
         {
             if (id != monto.Id)
             {

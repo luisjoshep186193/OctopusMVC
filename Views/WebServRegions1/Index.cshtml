@@ -7,7 +7,7 @@
 <input hidden id="pageType" name="WebServRegions1" />
 
 <p>
-    <a class="btn btn-outline-primary" onclick="showModal(this)" id="" name="Create">Nuevo WebSvc</a>
+    <button value="WebServRegions1" class="btn btn-outline-primary" onclick="showModal(this)" name="Create">Nuevo WebSvc</button>
 </p>
 <div class="jumbotron">
 
@@ -16,11 +16,11 @@
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.Region.Carrier)
-                    <button value="WebServRegions1" class="btn btn-primary btn-sm" onclick="showModal(this)">Edit</button>
+                    <button value="Carriers" class="btn btn-primary btn-sm" onclick="showModal(this)" name="Create">New</button>
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Region)
-                    <button value="WebServRegions1" class="btn btn-success btn-sm" onclick="showModal(this)">Edit</button>
+                    <button value="Regions" class="btn btn-success btn-sm" onclick="showModal(this)" name="Create">New</button>
                 </th>
 
                 <th>
@@ -31,7 +31,7 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.WebService)
-                    <button value="WebServRegions1" class="btn btn-success btn-sm" onclick="showModal(this)">Edit</button>
+                    <button value="Regions" class="btn btn-success btn-sm" onclick="showModal(this)" name="Create">Edit</button>
                 </th>
                 <th></th>
             </tr>

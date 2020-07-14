@@ -74,6 +74,17 @@ namespace Octopus
                 // Github requires a user-agent
                 c.DefaultRequestHeaders.Add("Host", "www.itmultiwebservice.net");
             });
+            services.AddHttpClient("MXTAED", c =>
+            {
+                c.BaseAddress = new Uri("http://www.itmultiwebservice.net/wsdmm/fdmmpaq.asmx");
+                // Github API versioning
+                c.DefaultRequestHeaders.Add("Accept", "application/soap+xml");
+                c.DefaultRequestHeaders
+      .Accept
+      .Add(new MediaTypeWithQualityHeaderValue("application/soap+xml"));
+                // Github requires a user-agent
+                c.DefaultRequestHeaders.Add("Host", "www.itmultiwebservice.net");
+            });
             services.AddHttpClient("Evolution", c =>
             {
                 c.BaseAddress = new Uri("http://www.ventamovil.com.mx:9094/service.asmx/");

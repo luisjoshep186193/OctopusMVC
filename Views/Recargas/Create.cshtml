@@ -221,8 +221,6 @@ Swal.fire({
                 console.log("index: " + index + " item: " + item);
                 subItems += "<option value='" + item.text + "'>" + item.value + "</option>";
                 });
-
-
                 console.log("subitems: "+JSON.stringify(subItems));
                 $("#selectMonto").html(subItems);
                 Swal.close();
