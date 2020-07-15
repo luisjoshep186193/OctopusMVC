@@ -493,9 +493,10 @@ namespace Octopus.Controllers
                             var ladaSubstr = recarga.PhoneNumber.ToString().Substring(0, 1);
                             var lada = new Lada();
                             var regionId = recarga.CarrierId;
+                            var region = new Region();
                             if (recarga.CarrierId == 1 || recarga.CarrierId == 9 || recarga.CarrierId == 10)
                             {
-                                 
+
                                 if (ladaSubstr == "4" || ladaSubstr == "7" || ladaSubstr == "8" || ladaSubstr == "9")
                                 {
                                     lada = getLada(7, recarga.PhoneNumber.ToString());
@@ -505,8 +506,14 @@ namespace Octopus.Controllers
                                     lada = getLada(3, recarga.PhoneNumber.ToString());
                                 }
                                 regionId = lada.RegionId;
+                                //trae las regiones telcel
+                                region = await _context.Regions.FindAsync(regionId);
                             }
-                            var region = await _context.Regions.FindAsync(regionId);
+                            else {
+                                //trae las demas regiones por carrierId
+                                region = await _context.Regions.Where(s => s.CarrierId == regionId).FirstOrDefaultAsync();
+                            }
+                        
 
 
 
@@ -523,7 +530,7 @@ namespace Octopus.Controllers
                                 {//trayendo la lista de web servers para la region que pertenece la lada
                                     
                                     var webServReg = await _context.WebServRegions
-                                        .Where(s => s.RegionId == regionId && s.WebService.Status == true)
+                                        .Where(s => s.RegionId == region.Id && s.WebService.Status == true)
                                         .Include(s => s.WebService).ThenInclude(s => s.WebServDesc)
                                         .OrderBy(s => s.WebService.Order).AsNoTracking().ToListAsync();
                                     if (webServReg.Count() > 0)
